@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VizionBuild — Front Porch Portfolio Portal</title>
+<meta name="description" content="VizionBuild portfolio intelligence portal for Front Porch senior living communities.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+:root{
+  --navy:#1B2A4A;--navy-mid:#243656;--navy-lt:#2E4470;
+  --blue:#4A6694;--blue-lt:#6B82A8;--blue-pale:#EEF2F8;--blue-soft:#8FA3C0;
+  --ink:#1B2A4A;--charcoal:#2C3A50;--gray:#5A6478;--gray-lt:#8896AB;
+  --sand:#F5F6F8;--sand-dk:#E4E8EF;--white:#fff;
+  --green:#1D9E75;--green-pl:#E1F5EE;--green-dk:#085041;
+  --amber:#D4880A;--amber-pl:#FDF3E0;--amber-dk:#7A4C00;
+  --red:#C93B3A;--red-pl:#FDF0F0;--red-dk:#7A1F1F;
+  /* Front Porch client accent — brand red from logo */
+  --client:#8B3A3A;--client-pl:#FBEAEC;--client-dk:#5A2424;
+  --font:'DM Sans',system-ui,sans-serif;--r:10px;--r-sm:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--sand);color:var(--ink);height:100vh;overflow:hidden}
+.hidden{display:none!important}
+a{text-decoration:none;color:inherit}
+
+.app{display:grid;grid-template-columns:260px 1fr;height:100vh}
+.sidebar{background:var(--navy);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+.main{display:flex;flex-direction:column;overflow:hidden;min-width:0}
+
+.sb-logo{padding:16px 16px 14px;border-bottom:0.5px solid rgba(255,255,255,.08)}
+.sb-client-badge{display:flex;align-items:center;gap:8px;margin-top:10px;padding:8px 10px;background:rgba(139,58,58,.2);border:1px solid rgba(139,58,58,.4);border-radius:7px}
+.sb-client-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--client);flex-shrink:0}
+.sb-client-name{font-size:11px;font-weight:600;color:#fff}
+.sb-client-sub{font-size:9px;color:rgba(255,255,255,.45)}
+.sb-nav-section{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.3);padding:14px 16px 5px}
+.sb-nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;transition:all .15s;border-right:2.5px solid transparent;user-select:none}
+.sb-nav-item i{font-size:16px;flex-shrink:0}
+.sb-nav-item:hover{background:rgba(255,255,255,.05);color:rgba(255,255,255,.9)}
+.sb-nav-item.active{background:rgba(255,255,255,.08);color:#fff;border-right-color:#8FA3C0}
+.sb-bottom{margin-top:auto;padding:14px 16px;border-top:0.5px solid rgba(255,255,255,.08)}
+.sb-user{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.sb-avatar{width:30px;height:30px;border-radius:50%;background:var(--client);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 26px;height:54px;background:#fff;border-bottom:1px solid var(--sand-dk);flex-shrink:0}
+.breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px}
+.breadcrumb .crumb{color:var(--gray-lt);cursor:pointer}
+.breadcrumb .crumb:hover{color:var(--blue)}
+.breadcrumb .crumb.current{color:var(--navy);font-weight:600;cursor:default}
+.breadcrumb .sep{color:var(--sand-dk)}
+
+.btn{display:inline-flex;align-items:center;gap:7px;font-family:var(--font);font-size:13px;font-weight:500;padding:8px 16px;border-radius:var(--r-sm);border:none;cursor:pointer;transition:all .18s;text-decoration:none}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--navy)}
+.btn-client{background:var(--client);color:#fff}.btn-client:hover{background:var(--client-dk)}
+.btn-ghost{background:transparent;color:var(--gray);border:1px solid var(--sand-dk)}.btn-ghost:hover{background:var(--sand)}
+.btn-sm{font-size:12px;padding:6px 13px}
+.badge{display:inline-block;font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px}
+.badge-green{background:var(--green-pl);color:var(--green-dk)}
+.badge-amber{background:var(--amber-pl);color:var(--amber-dk)}
+.badge-red{background:var(--red-pl);color:var(--red-dk)}
+.badge-blue{background:var(--blue-pale);color:var(--navy-mid)}
+.badge-gray{background:var(--sand);color:var(--gray-lt)}
+
+.content{flex:1;overflow-y:auto;padding:22px 28px 50px;min-width:0}
+.page-header{margin-bottom:20px}
+.page-title{font-size:20px;font-weight:700;color:var(--navy);letter-spacing:-.4px;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--gray-lt)}
+
+.card{background:#fff;border:1px solid var(--sand-dk);border-radius:var(--r);padding:20px 22px;margin-bottom:14px;box-shadow:0 1px 4px rgba(27,42,74,.04)}
+.card-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card-title i{font-size:16px;color:var(--blue)}
+
+/* ── COMMUNITY GRID ── */
+.community-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.comm-card{background:#fff;border:1px solid var(--sand-dk);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s;box-shadow:0 1px 4px rgba(27,42,74,.04)}
+.comm-card:hover{box-shadow:0 4px 16px rgba(27,42,74,.12);transform:translateY(-2px);border-color:var(--client)}
+.comm-thumb{height:90px;background:linear-gradient(135deg,#1B2A4A,#2E4470);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.comm-thumb-icon{font-size:34px;color:rgba(255,255,255,.25)}
+.comm-thumb-quality{position:absolute;top:9px;right:9px;font-size:8.5px;font-weight:700;padding:2px 8px;border-radius:20px}
+.comm-body{padding:14px 16px}
+.comm-name{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:3px}
+.comm-meta{font-size:11px;color:var(--gray-lt);margin-bottom:10px}
+.comm-stats{display:flex;gap:12px;padding-top:10px;border-top:1px solid var(--sand-dk)}
+.comm-stat{flex:1}
+.comm-stat-val{font-size:13px;font-weight:700;color:var(--navy)}
+.comm-stat-lbl{font-size:9px;color:var(--gray-lt);text-transform:uppercase;letter-spacing:.04em}
+
+/* ── BUILDING GRID (within a community) ── */
+.bldg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.bldg-card{background:#fff;border:1px solid var(--sand-dk);border-radius:10px;padding:14px 16px;cursor:pointer;transition:all .18s;position:relative}
+.bldg-card:hover{border-color:var(--blue-lt);box-shadow:0 2px 10px rgba(27,42,74,.08)}
+.bldg-card.selectable.selected{border-color:var(--blue);background:var(--blue-pale)}
+.bldg-type-chip{display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;padding:3px 9px;border-radius:20px;margin-bottom:9px}
+.bldg-name{font-size:13.5px;font-weight:600;color:var(--navy);margin-bottom:4px;line-height:1.3}
+.bldg-desc{font-size:11px;color:var(--gray);line-height:1.5;margin-bottom:8px}
+.bldg-meta-row{display:flex;gap:10px;font-size:10px;color:var(--gray-lt);padding-top:8px;border-top:1px solid var(--sand-dk)}
+.bldg-status-tag{position:absolute;top:10px;right:10px;font-size:8.5px;font-weight:700;padding:2px 8px;border-radius:20px}
+.bldg-check{position:absolute;top:10px;right:10px;width:18px;height:18px;border-radius:50%;border:2px solid var(--sand-dk);display:flex;align-items:center;justify-content:center}
+.bldg-card.selected .bldg-check{background:var(--blue);border-color:var(--blue)}
+.bldg-card.selected .bldg-check i{color:#fff;font-size:10px}
+
+/* ── TYPE FILTER PILLS ── */
+.type-filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.type-pill{font-size:11px;font-weight:500;padding:5px 12px;border-radius:20px;border:1px solid var(--sand-dk);background:#fff;color:var(--gray);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px}
+.type-pill:hover{border-color:var(--blue-lt)}
+.type-pill.active{color:#fff;border-color:transparent}
+
+/* ── STATS ROW ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.stat-card{background:#fff;border:1px solid var(--sand-dk);border-radius:10px;padding:16px 18px;box-shadow:0 1px 4px rgba(27,42,74,.04)}
+.stat-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gray-lt);margin-bottom:8px}
+.stat-val{font-size:26px;font-weight:700;color:var(--navy);letter-spacing:-.5px}
+.stat-sub{font-size:11px;color:var(--gray-lt);margin-top:3px}
+
+/* ── PATH PICKER ── */
+.path-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:920px;margin:0 auto}
+.path-card{background:#fff;border:2px solid var(--sand-dk);border-radius:16px;padding:32px 28px;cursor:pointer;transition:all .22s;text-align:center}
+.path-card:hover{border-color:var(--client);box-shadow:0 8px 28px rgba(27,42,74,.12);transform:translateY(-3px)}
+.path-icon{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px}
+.path-title{font-size:17px;font-weight:700;color:var(--navy);margin-bottom:8px}
+.path-desc{font-size:13px;color:var(--gray);line-height:1.6;margin-bottom:18px}
+.path-list{text-align:left;font-size:12px;color:var(--gray);line-height:2;margin-bottom:18px}
+.path-list i{color:var(--green);margin-right:6px;font-size:13px}
+
+/* ── SELECTOR CARDS ── */
+.select-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.select-card{background:#fff;border:2px solid var(--sand-dk);border-radius:12px;padding:18px 20px;cursor:pointer;transition:all .18s;position:relative}
+.select-card:hover{border-color:var(--blue-lt)}
+.select-card.selected{border-color:var(--blue);background:var(--blue-pale)}
+.select-card .check{position:absolute;top:14px;right:14px;width:20px;height:20px;border-radius:50%;border:2px solid var(--sand-dk);display:flex;align-items:center;justify-content:center;transition:all .18s}
+.select-card.selected .check{background:var(--blue);border-color:var(--blue)}
+.select-card.selected .check i{color:#fff;font-size:11px}
+.select-card-icon{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.select-card-title{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:5px}
+.select-card-desc{font-size:12px;color:var(--gray);line-height:1.55}
+
+/* ── FORMS ── */
+.form-grid{display:grid;gap:14px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:1fr 1fr 1fr}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gray-lt)}
+.req{color:var(--red)}
+.form-input,.form-select,.form-textarea{font-family:var(--font);font-size:13.5px;color:var(--ink);background:#fff;border:1px solid var(--sand-dk);border-radius:var(--r-sm);padding:9px 12px;outline:none;transition:all .18s;width:100%}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:#4A6694;box-shadow:0 0 0 3px rgba(74,102,148,.1)}
+.form-select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238896AB' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.form-textarea{resize:vertical;min-height:78px;line-height:1.6}
+.form-hint{font-size:11px;color:var(--gray-lt);line-height:1.5}
+.fsec{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#4A6694;border-bottom:1px solid var(--blue-pale);padding-bottom:5px;margin:14px 0 2px}
+.form-nav{display:flex;justify-content:space-between;align-items:center;margin-top:22px;padding-top:16px;border-top:1px solid var(--sand-dk)}
+
+/* ── UPLOAD ── */
+.upload-zone{border:2px dashed var(--sand-dk);border-radius:var(--r);padding:26px;text-align:center;cursor:pointer;transition:all .2s;background:var(--sand)}
+.upload-zone:hover,.upload-zone.drag-over{border-color:#4A6694;background:var(--blue-pale)}
+.upload-zone input{display:none}
+.uz-icon{font-size:28px;color:var(--gray-lt);margin-bottom:8px}
+.uz-title{font-size:13px;font-weight:500;color:var(--gray)}
+.uz-sub{font-size:11px;color:var(--gray-lt);margin-top:4px}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:8px;margin-top:12px}
+.photo-thumb{position:relative;aspect-ratio:1;border-radius:var(--r-sm);overflow:hidden;background:var(--sand-dk)}
+.photo-thumb img{width:100%;height:100%;object-fit:cover}
+.doc-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gray);padding:6px 0;border-bottom:1px solid var(--sand-dk)}
+.doc-item i{color:#4A6694}
+
+/* ── STEPPER ── */
+.stepper{display:flex;align-items:center;margin-bottom:24px;max-width:820px}
+.step-node{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.step-circle{width:34px;height:34px;border-radius:50%;background:var(--sand-dk);color:var(--gray-lt);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.step-circle.active{background:var(--blue);color:#fff}
+.step-circle.done{background:var(--green);color:#fff}
+.step-label{font-size:10px;color:var(--gray-lt);margin-top:6px;text-align:center;max-width:90px;line-height:1.3}
+.step-label.active{color:var(--navy);font-weight:600}
+.step-line{flex:1;height:2px;background:var(--sand-dk);margin:0 6px;margin-bottom:22px}
+.step-line.done{background:var(--green)}
+
+/* ── ROOM/UNIT PICKER ── */
+.room-search{position:relative;margin-bottom:14px}
+.room-results{max-height:220px;overflow-y:auto;border:1px solid var(--sand-dk);border-radius:8px}
+.room-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--sand-dk);cursor:pointer;transition:background .15s}
+.room-row:last-child{border-bottom:none}
+.room-row:hover{background:var(--sand)}
+.room-row.selected{background:var(--blue-pale)}
+.room-name{font-size:13px;font-weight:500;color:var(--navy)}
+.room-meta{font-size:11px;color:var(--gray-lt)}
+
+/* ── OPTIMUM FINDER ── */
+.optimum-card{background:linear-gradient(135deg,#1B2A4A,#2E4470);border-radius:12px;padding:22px;color:#fff;margin-top:14px}
+.optimum-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(29,158,117,.2);border:1px solid rgba(29,158,117,.4);color:#5DCAA5;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:12px}
+.optimum-title{font-size:16px;font-weight:700;margin-bottom:4px}
+.optimum-meta{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:14px}
+.optimum-reasons{display:flex;flex-direction:column;gap:8px}
+.optimum-reason{display:flex;gap:9px;font-size:12px;color:rgba(255,255,255,.75);line-height:1.55}
+.optimum-reason i{color:#8FA3C0;font-size:14px;flex-shrink:0;margin-top:1px}
+
+/* ── PROGRAM BUILDER ── */
+.program-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 40px;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--sand-dk)}
+.program-row.header{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gray-lt);border-bottom:2px solid var(--sand-dk)}
+.program-total{display:flex;justify-content:space-between;padding:12px 0 0;font-size:13px;font-weight:700;color:var(--navy)}
+
+/* ── COMPARISON ── */
+.compare-grid{display:grid;gap:10px}
+.compare-card{background:#fff;border:1px solid var(--sand-dk);border-radius:10px;padding:16px;position:relative}
+.compare-card.winner{border:2px solid var(--green);background:var(--green-pl)}
+.compare-winner-tag{position:absolute;top:-10px;left:16px;background:var(--green);color:#fff;font-size:9px;font-weight:700;padding:3px 10px;border-radius:10px;letter-spacing:.05em}
+.compare-score{font-size:32px;font-weight:700;letter-spacing:-1px}
+
+/* ── QUESTIONNAIRE ── */
+.q-bubble{background:var(--blue-pale);border-radius:12px 12px 12px 2px;padding:12px 16px;max-width:80%;font-size:13px;color:var(--charcoal);line-height:1.6;margin-bottom:8px}
+.q-bubble-ai{display:flex;gap:10px;margin-bottom:16px}
+.q-avatar{width:28px;height:28px;border-radius:7px;background:var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ── LOADING ── */
+.loading-state{display:flex;flex-direction:column;align-items:center;padding:52px 0;gap:16px}
+.spinner{width:32px;height:32px;border:2.5px solid var(--sand-dk);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .3s ease both}
+
+.flex{display:flex}.items-center{align-items:center}.gap-8{gap:8px}.gap-12{gap:12px}.justify-between{justify-content:space-between}.mt-8{margin-top:8px}.mt-14{margin-top:14px}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<aside class="sidebar">
+  <div class="sb-logo">
+    <img src="data:image/png;base64,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" alt="VizionBuild" style="height:30px;width:auto;filter:brightness(0) invert(1);opacity:.92;display:block" />
+    <div class="sb-client-badge">
+      <div class="dot"></div>
+      <div>
+        <div class="sb-client-name">Front Porch</div>
+        <div class="sb-client-sub">Senior Living Portfolio Portal</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sb-nav-section">Portfolio</div>
+  <div class="sb-nav-item active" id="nav-communities" onclick="nav('communities')"><i class="ti ti-map-pin"></i>Communities</div>
+  <div class="sb-nav-item" id="nav-new" onclick="nav('path-picker')"><i class="ti ti-plus"></i>New assessment</div>
+  <div class="sb-nav-item" id="nav-reports" onclick="nav('reports')"><i class="ti ti-file-text"></i>Assessment history</div>
+
+  <div class="sb-nav-section">Insights</div>
+  <div class="sb-nav-item" id="nav-portfolio-intel" onclick="nav('portfolio-intel')"><i class="ti ti-chart-dots"></i>Portfolio intelligence</div>
+  <div class="sb-nav-item" onclick="alert('Capital planning roadmap — coming soon. Aggregates deferred maintenance across all 15 communities into a prioritized multi-year capital plan.')"><i class="ti ti-calendar-stats"></i>Capital planning</div>
+
+  <div class="sb-nav-section">Account</div>
+  <div class="sb-nav-item" onclick="alert('Team management — invite community staff, assign roles, and manage seat licenses per community or organization-wide.')"><i class="ti ti-users"></i>Team &amp; seats</div>
+  <div class="sb-nav-item" onclick="alert('Billing — manage your subscription, usage, and invoices.')"><i class="ti ti-credit-card"></i>Billing &amp; plan</div>
+  <div class="sb-nav-item" onclick="alert('Settings — default code year, notification preferences, white-label branding.')"><i class="ti ti-settings"></i>Settings</div>
+
+  <div class="sb-bottom">
+    <div class="sb-user">
+      <div class="sb-avatar">SK</div>
+      <div>
+        <div style="font-size:12px;color:rgba(255,255,255,.85);font-weight:600">Sarah Kim</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.38)">VP of Facilities &amp; Capital Planning</div>
+      </div>
+    </div>
+    <div style="font-size:10px;color:rgba(255,255,255,.3);padding-top:8px;border-top:1px solid rgba(255,255,255,.08)">
+      Enterprise Plan · 15 communities · <span style="color:#8FA3C0">Powered by VizionBuild</span>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="breadcrumb" id="breadcrumb"><span class="crumb current">Communities</span></div>
+    <div class="flex gap-8" id="topbar-actions">
+      <button class="btn btn-client btn-sm" onclick="nav('path-picker')"><i class="ti ti-plus"></i>New assessment</button>
+    </div>
+  </div>
+
+  <div class="content" id="content">
+
+    <!-- ═══════════════ PAGE: COMMUNITIES (top-level dashboard) ═══════════════ -->
+    <div id="page-communities" class="page">
+      <div class="page-header">
+        <div class="page-title">Front Porch Communities</div>
+        <div class="page-sub">15 communities across California · Select a community to view its building inventory</div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Communities</div><div class="stat-val">15</div><div class="stat-sub">Across California</div></div>
+        <div class="stat-card"><div class="stat-label">Total buildings</div><div class="stat-val" id="stat-total-buildings">—</div><div class="stat-sub">All types, all communities</div></div>
+        <div class="stat-card"><div class="stat-label">Full site data</div><div class="stat-val" id="stat-full-data" style="color:var(--green)">—</div><div class="stat-sub">Communities with complete maps</div></div>
+        <div class="stat-card"><div class="stat-label">Needs data entry</div><div class="stat-val" id="stat-needs-data" style="color:var(--amber)">—</div><div class="stat-sub">Communities to complete</div></div>
+      </div>
+
+      <div class="flex justify-between items-center" style="margin-bottom:14px">
+        <div style="font-size:13px;font-weight:600;color:var(--navy)">All communities</div>
+        <button class="btn btn-ghost btn-sm" onclick="alert(\'Filter by region or data completeness.\')"><i class="ti ti-filter"></i>Filter</button>
+      </div>
+
+      <div class="community-grid" id="community-grid"></div>
+    </div>
+
+    <!-- ═══════════════ PAGE: COMMUNITY DETAIL (building inventory) ═══════════════ -->
+    <div id="page-community-detail" class="page hidden">
+      <div class="page-header">
+        <div class="flex justify-between items-center">
+          <div>
+            <div class="page-title" id="cd-name">—</div>
+            <div class="page-sub" id="cd-meta">—</div>
+          </div>
+          <button class="btn btn-client" onclick="startAssessmentForCommunity()"><i class="ti ti-search"></i> New assessment for this community</button>
+        </div>
+      </div>
+
+      <div class="type-filter-row" id="cd-type-filters"></div>
+      <div class="bldg-grid" id="cd-building-grid"></div>
+    </div>
+
+    <!-- ═══════════════ PAGE: BUILDING DETAIL ═══════════════ -->
+    <div id="page-building-detail" class="page hidden">
+      <div class="page-header">
+        <div class="flex justify-between items-center">
+          <div>
+            <div class="page-title" id="bd-name">—</div>
+            <div class="page-sub" id="bd-meta">—</div>
+          </div>
+          <button class="btn btn-client" onclick="startAssessmentFor('single')"><i class="ti ti-search"></i> Run new assessment</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px">
+        <div>
+          <div class="card">
+            <div class="card-title"><i class="ti ti-id"></i>Building profile</div>
+            <div id="bd-profile-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="ti ti-photo"></i>Photos &amp; drawings</div>
+            <div id="bd-photos"></div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-title"><i class="ti ti-history"></i>Assessment history</div>
+            <div id="bd-history"></div>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="ti ti-upload"></i>Add data to this building</div>
+            <div style="font-size:12px;color:var(--gray);line-height:1.6;margin-bottom:12px">Upload drawings, photos, or documents to make assessments of this building more accurate.</div>
+            <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center" onclick="nav('add-building')"><i class="ti ti-upload"></i> Upload data</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PAGE: ADD BUILDING ═══════════════ -->
+    <div id="page-add-building" class="page hidden">
+      <div class="page-header">
+        <div class="page-title">Add Building or Site</div>
+        <div class="page-sub" id="ab-community-context">Add a new building to a Front Porch community</div>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="ti ti-building"></i>Building information</div>
+        <div class="form-grid" style="gap:14px">
+          <div class="form-grid g2">
+            <div class="form-group"><label class="form-label">Community <span class="req">*</span></label>
+              <select class="form-select" id="ab-community"></select>
+            </div>
+            <div class="form-group"><label class="form-label">Building name <span class="req">*</span></label><input class="form-input" id="ab-name" placeholder="e.g. Holly Cottage"></div>
+          </div>
+          <div class="form-grid g3">
+            <div class="form-group"><label class="form-label">Building type <span class="req">*</span></label>
+              <select class="form-select" id="ab-type"></select>
+            </div>
+            <div class="form-group"><label class="form-label">Year built</label><input class="form-input" id="ab-year" placeholder="e.g. 1985"></div>
+            <div class="form-group"><label class="form-label">Gross square footage</label><input class="form-input" id="ab-sqft" placeholder="e.g. 24,000 sf"></div>
+          </div>
+          <div class="form-grid g2">
+            <div class="form-group"><label class="form-label">Number of floors</label><input class="form-input" id="ab-floors" placeholder="e.g. 2"></div>
+            <div class="form-group"><label class="form-label">Number of units (if residential)</label><input class="form-input" id="ab-units" placeholder="e.g. 24"></div>
+          </div>
+
+          <div class="fsec">Unit / room directory (optional — enables granular selection)</div>
+          <div class="upload-zone" onclick="document.getElementById('ab-directory').click()">
+            <input type="file" id="ab-directory" accept=".pdf,.xlsx,.csv,.dwg" multiple>
+            <div class="uz-icon"><i class="ti ti-table"></i></div>
+            <div class="uz-title">Upload a unit/room schedule, floor plans, or DWG/PDF set</div>
+            <div class="uz-sub">VizionBuild will index units so you can select them by name in future assessments</div>
+          </div>
+
+          <div class="fsec">Drawings &amp; documents</div>
+          <div class="upload-zone" onclick="document.getElementById('ab-drawings').click()">
+            <input type="file" id="ab-drawings" accept=".pdf,.dwg,.dxf,.xlsx,.docx" multiple onchange="addDocs(this.files,'ab-doclist')">
+            <div class="uz-icon"><i class="ti ti-file-upload"></i></div>
+            <div class="uz-title">Upload site maps, architectural drawings, MEP drawings, or as-builts</div>
+            <div class="uz-sub">PDF, DWG, DXF — as many as you have. More detail produces more accurate assessments.</div>
+          </div>
+          <div id="ab-doclist"></div>
+
+          <div class="fsec">Site &amp; building photos</div>
+          <div class="upload-zone" onclick="document.getElementById('ab-photos').click()" ondrop="dropFiles(event,'ab')" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')">
+            <input type="file" id="ab-photos" accept="image/*" multiple onchange="addPhotos(this.files,'ab')">
+            <div class="uz-icon"><i class="ti ti-camera"></i></div>
+            <div class="uz-title">Upload exterior and interior photos</div>
+            <div class="uz-sub">Used for visual condition analysis across all future assessments of this building</div>
+          </div>
+          <div class="photo-grid" id="pg-ab"></div>
+
+          <div class="form-group">
+            <label class="form-label">Notes</label>
+            <textarea class="form-textarea" id="ab-notes" placeholder="e.g. Roof replaced 2019. Shares MEP plant with adjacent building."></textarea>
+          </div>
+        </div>
+        <div class="form-nav">
+          <button class="btn btn-ghost" onclick="cancelAddBuilding()"><i class="ti ti-arrow-left"></i> Cancel</button>
+          <button class="btn btn-client" onclick="saveBuildingToInventory()"><i class="ti ti-check"></i> Add to portfolio</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PAGE: PATH PICKER ═══════════════ -->
+    <div id="page-path-picker" class="page hidden">
+      <div class="page-header" style="text-align:center">
+        <div class="page-title">Start a New Assessment</div>
+        <div class="page-sub">Choose how you'd like to begin</div>
+      </div>
+      <div class="path-grid">
+        <div class="path-card" onclick="currentFlow.fromPathPicker=true; nav('add-building')">
+          <div class="path-icon" style="background:var(--blue-pale)"><i class="ti ti-plus" style="font-size:30px;color:#4A6694"></i></div>
+          <div class="path-title">Add a New Building</div>
+          <div class="path-desc">This building or site isn't in your Front Porch portfolio yet. Add it now and run your first assessment.</div>
+          <div class="path-list">
+            <div><i class="ti ti-check"></i>Enter building basics &amp; upload drawings</div>
+            <div><i class="ti ti-check"></i>Saved permanently to your portfolio</div>
+            <div><i class="ti ti-check"></i>Continue straight into a new assessment</div>
+          </div>
+          <button class="btn btn-client" style="width:100%;justify-content:center">Add building <i class="ti ti-arrow-right"></i></button>
+        </div>
+        <div class="path-card" onclick="selectedBuildingIds=[];compareMode=false;nav('select-community')">
+          <div class="path-icon" style="background:var(--green-pl)"><i class="ti ti-building-skyscraper" style="font-size:30px;color:var(--green)"></i></div>
+          <div class="path-title">Select from Existing Inventory</div>
+          <div class="path-desc">This building is already in your portfolio. Pick a community, then select one building, or compare several to find the best fit for a proposed use.</div>
+          <div class="path-list">
+            <div><i class="ti ti-check"></i>Choose from 15 communities, 143+ buildings on file</div>
+            <div><i class="ti ti-check"></i>Select one building, or compare multiple</div>
+            <div><i class="ti ti-check"></i>All saved drawings &amp; photos auto-included</div>
+          </div>
+          <button class="btn" style="width:100%;justify-content:center;background:var(--green);color:#fff">Select inventory <i class="ti ti-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PAGE: SELECT COMMUNITY (step before building select) ═══════════════ -->
+    <div id="page-select-community" class="page hidden">
+      <div class="page-header">
+        <div class="page-title">Select a Community</div>
+        <div class="page-sub">Choose which Front Porch community to work in</div>
+      </div>
+      <div class="community-grid" id="select-community-grid"></div>
+    </div>
+
+    <!-- ═══════════════ PAGE: SELECT FROM INVENTORY (buildings within community) ═══════════════ -->
+    <div id="page-select-inventory" class="page hidden">
+      <div class="page-header">
+        <div class="page-title">Select Building or Site</div>
+        <div class="page-sub" id="si-community-name">Choose one property to assess, or select multiple to compare which is the best fit for your proposed use</div>
+      </div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="flex justify-between items-center">
+          <div style="font-size:12px;color:var(--gray)"><span id="select-count">0</span> selected</div>
+          <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray);cursor:pointer">
+            <input type="checkbox" id="compare-mode-toggle" onchange="toggleCompareMode()"> Compare mode (select multiple)
+          </label>
+        </div>
+      </div>
+      <div class="type-filter-row" id="si-type-filters"></div>
+      <div class="bldg-grid" id="select-bldg-grid"></div>
+      <div class="form-nav">
+        <button class="btn btn-ghost" onclick="nav('select-community')"><i class="ti ti-arrow-left"></i> Back to communities</button>
+        <button class="btn btn-client" id="select-continue-btn" onclick="continueFromSelection()" disabled>Continue <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PAGE: SCOPE ═══════════════ -->
+    <div id="page-scope" class="page hidden">
+      <div class="stepper" id="scope-stepper"></div>
+      <div class="page-header">
+        <div class="page-title">Define the Scope of Renovation</div>
+        <div class="page-sub" id="scope-building-name">—</div>
+      </div>
+      <div class="select-grid" style="max-width:760px">
+        <div class="select-card" data-scope="suite" onclick="selectScope('suite',this)">
+          <div class="check"><i class="ti ti-check hidden"></i></div>
+          <div class="select-card-icon" style="background:var(--blue-pale)"><i class="ti ti-door" style="font-size:20px;color:#4A6694"></i></div>
+          <div class="select-card-title">Unit / Room Renovation</div>
+          <div class="select-card-desc">A single unit, room, or small contiguous space within the building.</div>
+        </div>
+        <div class="select-card" data-scope="floor" onclick="selectScope('floor',this)">
+          <div class="check"><i class="ti ti-check hidden"></i></div>
+          <div class="select-card-icon" style="background:var(--amber-pl)"><i class="ti ti-stack-2" style="font-size:20px;color:var(--amber)"></i></div>
+          <div class="select-card-title">Entire Floor / Multi-Unit</div>
+          <div class="select-card-desc">A full floor, or multiple units/rooms across one or more floors.</div>
+        </div>
+        <div class="select-card" data-scope="building" onclick="selectScope('building',this)" style="grid-column:1 / -1">
+          <div class="check"><i class="ti ti-check hidden"></i></div>
+          <div class="select-card-icon" style="background:var(--green-pl)"><i class="ti ti-building" style="font-size:20px;color:var(--green)"></i></div>
+          <div class="select-card-title">Entire Building Renovation</div>
+          <div class="select-card-desc">A complete building-wide conversion or renovation, affecting all floors and systems.</div>
+        </div>
+      </div>
+
+      <div id="scope-room-picker" class="hidden card" style="max-width:760px;margin-top:18px">
+        <div class="card-title"><i class="ti ti-search"></i>Which space?</div>
+        <div style="display:flex;gap:6px;margin-bottom:14px">
+          <button class="btn btn-sm" id="room-mode-pick" onclick="setRoomMode('pick')" style="background:var(--blue);color:#fff">Pick from directory</button>
+          <button class="btn btn-sm btn-ghost" id="room-mode-free" onclick="setRoomMode('free')">Describe freely</button>
+        </div>
+        <div id="room-pick-mode">
+          <div class="room-search"><input class="form-input" placeholder="Search units (e.g. 225, 2nd floor, IL)" oninput="filterRooms(this.value)"></div>
+          <div class="room-results" id="room-results"></div>
+        </div>
+        <div id="room-free-mode" class="hidden">
+          <div class="form-grid g2" style="margin-bottom:10px">
+            <div class="form-group"><label class="form-label">Approximate area needed</label><input class="form-input" id="free-sqft" placeholder="e.g. 1,000 sf" oninput="maybeShowOptimumFinder()"></div>
+            <div class="form-group"><label class="form-label">Preferred floor (optional)</label><input class="form-input" id="free-floor" placeholder="e.g. 1st floor, or no preference"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Describe what you need</label>
+            <textarea class="form-textarea" id="free-desc" placeholder="e.g. Need approximately 1,000 sf to convert an underused common area into a new memory care day room." oninput="maybeShowOptimumFinder()"></textarea>
+          </div>
+          <div id="optimum-finder-result"></div>
+        </div>
+      </div>
+      <div class="form-nav" style="max-width:760px">
+        <button class="btn btn-ghost" onclick="history.back()"><i class="ti ti-arrow-left"></i> Back</button>
+        <button class="btn btn-client" id="scope-continue-btn" onclick="nav('program')" disabled>Continue <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PAGE: PROGRAM ═══════════════ -->
+    <div id="page-program" class="page hidden">
+      <div class="stepper" id="program-stepper"></div>
+      <div class="page-header">
+        <div class="page-title">Define Your Program</div>
+        <div class="page-sub">Your "program" is the space-by-space requirements for this project — room types, sizes, and adjacencies</div>
+      </div>
+      <div id="program-question" class="select-grid" style="max-width:760px">
+        <div class="select-card" onclick="selectProgramPath('have')">
+          <div class="select-card-icon" style="background:var(--green-pl)"><i class="ti ti-clipboard-check" style="font-size:20px;color:var(--green)"></i></div>
+          <div class="select-card-title">I already have a program</div>
+          <div class="select-card-desc">Upload or enter your existing space program — room list, square footages, and requirements.</div>
+        </div>
+        <div class="select-card" onclick="selectProgramPath('build')">
+          <div class="select-card-icon" style="background:var(--blue-pale)"><i class="ti ti-list-details" style="font-size:20px;color:#4A6694"></i></div>
+          <div class="select-card-title">I need help building one</div>
+          <div class="select-card-desc">Answer a few guided questions and VizionBuild will generate a space program for you.</div>
+        </div>
+      </div>
+      <div id="program-have" class="hidden card" style="max-width:760px">
+        <div class="card-title"><i class="ti ti-upload"></i>Upload your program</div>
+        <div class="upload-zone" onclick="document.getElementById('prog-upload').click()">
+          <input type="file" id="prog-upload" accept=".pdf,.xlsx,.csv,.docx">
+          <div class="uz-icon"><i class="ti ti-file-spreadsheet"></i></div>
+          <div class="uz-title">Upload your space program (Excel, PDF, or Word)</div>
+          <div class="uz-sub">Or enter it manually below</div>
+        </div>
+        <div class="form-nav" style="border-top:none;padding-top:14px;margin-top:14px">
+          <button class="btn btn-ghost" onclick="backToProgramQuestion()"><i class="ti ti-arrow-left"></i> Back</button>
+          <button class="btn btn-client" onclick="nav('compare-or-report')">Continue <i class="ti ti-arrow-right"></i></button>
+        </div>
+      </div>
+      <div id="program-build" class="hidden card" style="max-width:760px">
+        <div class="card-title"><i class="ti ti-message-chatbot"></i>VizionBuild Program Assistant</div>
+        <div id="q-thread"></div>
+        <div class="form-nav" style="border-top:none;padding-top:10px;margin-top:6px">
+          <button class="btn btn-ghost" onclick="backToProgramQuestion()"><i class="ti ti-arrow-left"></i> Back</button>
+          <button class="btn btn-client" id="program-build-continue" onclick="generateProgram()">Generate program <i class="ti ti-sparkles"></i></button>
+        </div>
+      </div>
+      <div id="program-result" class="hidden card" style="max-width:900px">
+        <div class="card-title"><i class="ti ti-table"></i>Generated space program</div>
+        <div class="program-row header"><div>Space</div><div>Qty</div><div>SF each</div><div>Total SF</div><div></div></div>
+        <div id="program-rows"></div>
+        <div class="program-total"><span>Total program area</span><span id="program-total-sf">—</span></div>
+        <div class="form-nav">
+          <button class="btn btn-ghost" onclick="backToProgramQuestion()"><i class="ti ti-arrow-left"></i> Start over</button>
+          <button class="btn btn-client" onclick="nav('compare-or-report')">Use this program <i class="ti ti-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PAGE: COMPARISON ═══════════════ -->
+    <div id="page-comparison" class="page hidden">
+      <div class="page-header">
+        <div class="page-title">Building Comparison — Best Fit Analysis</div>
+        <div class="page-sub" id="comparison-sub">Comparing properties for the same proposed use</div>
+      </div>
+      <div id="comparison-content"></div>
+    </div>
+
+    <!-- ═══════════════ PAGE: REPORTS ═══════════════ -->
+    <div id="page-reports" class="page hidden">
+      <div class="page-header">
+        <div class="page-title">Assessment History</div>
+        <div class="page-sub">All assessments run across the Front Porch portfolio</div>
+      </div>
+      <div class="card"><div id="reports-table"></div></div>
+    </div>
+
+    <!-- ═══════════════ PAGE: PORTFOLIO INTELLIGENCE ═══════════════ -->
+    <div id="page-portfolio-intel" class="page hidden">
+      <div class="page-header">
+        <div class="page-title">Portfolio Intelligence</div>
+        <div class="page-sub">Patterns and recurring findings across all Front Porch communities</div>
+      </div>
+      <div id="portfolio-intel-content"></div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app -->
+<script>
+// ══════════════════════════════════════════════════════════════
+//  FRONT PORCH PORTFOLIO DATA — 15 communities
+//  Building types: il (Independent Living), al (Assisted Living),
+//  mc (Memory Care), snf (Skilled Nursing), admin (Administrative),
+//  community (Community/Amenity Building), outdoor (Site Amenity),
+//  support (Garage/Carport/Maintenance), mixed (Mixed Use)
+// ══════════════════════════════════════════════════════════════
+
+const TYPE_META = {
+  il:        {label:'Independent Living', color:'#1D9E75', bg:'#E1F5EE', icon:'ti-home'},
+  al:        {label:'Assisted Living',    color:'#A6192E', bg:'#FBEAEC', icon:'ti-heart-handshake'},
+  mc:        {label:'Memory Care',        color:'#6B5DB5', bg:'#F0EDF9', icon:'ti-brain'},
+  snf:       {label:'Skilled Nursing',    color:'#D4880A', bg:'#FDF3E0', icon:'ti-stethoscope'},
+  admin:     {label:'Administrative',     color:'#1B2A4A', bg:'#EEF2F8', icon:'ti-building-bank'},
+  community: {label:'Community / Amenity',color:'#C2862E', bg:'#FFF0E6', icon:'ti-confetti'},
+  outdoor:   {label:'Outdoor / Site Amenity', color:'#0F6E56', bg:'#E6F5F0', icon:'ti-tree'},
+  support:   {label:'Support Structure',  color:'#5A6478', bg:'#F5F6F8', icon:'ti-parking'},
+  mixed:     {label:'Mixed Use',          color:'#8A4B1E', bg:'#FBF0E8', icon:'ti-stack-2'},
+};
+
+const COMMUNITIES = [
+  // ═══════════════════════════════════════════════════════════
+  {
+    id:'claremont-manor', name:'Claremont Manor', address:'650 Harrison Ave, Claremont, CA 91711',
+    phone:'(909) 626-1227', dataQuality:'full', region:'Los Angeles Metro',
+    buildings:[
+      {id:'cm-manor-hall', name:'Manor Hall', type:'mixed', desc:'Main building — West Manor, East Manor, Lobby/Front Desk, Manor Hall 3rd floor, Library (3rd fl), Salon (3rd fl), Puzzle Room', sqft:118000, floors:3, year:1985},
+      {id:'cm-lodge', name:'The Lodge', type:'community', desc:'Wellness Center co-located building with pool deck adjacency', sqft:14000, floors:1, year:1995},
+      {id:'cm-health-care', name:'Health Care Center', type:'snf', desc:'Skilled nursing facility', sqft:42000, floors:2, year:1985},
+      {id:'cm-wellness', name:'Wellness Center', type:'community', desc:'Fitness Center, Plaza, includes pool deck', sqft:9500, floors:1, year:2005},
+      {id:'cm-summer-house', name:'Summer House', type:'mixed', desc:'Shares structure with Memory Care and Care wings', sqft:18000, floors:1, year:1998},
+      {id:'cm-memory', name:'Memory (Memory Care)', type:'mc', desc:'Memory care neighborhood', sqft:16000, floors:1, year:1998},
+      {id:'cm-care', name:'Care (Assisted Living)', type:'al', desc:'Assisted living wing adjacent to Memory Care', sqft:16500, floors:1, year:1998},
+      {id:'cm-cambridge-apts', name:'400 Cambridge Apartments', type:'il', desc:'Independent living apartment building', sqft:62000, floors:3, year:1980},
+      {id:'cm-east-lounge', name:'East Lounge / Wood Shop', type:'community', desc:'Resident activity building — woodshop, lounge', sqft:6200, floors:1, year:1985},
+      {id:'cm-garden-apts', name:'Garden Apartments', type:'il', desc:'Buildings 610-626 cluster, independent living', sqft:48000, floors:2, year:1988},
+      {id:'cm-cottages', name:'Cottages (various — 104 units)', type:'il', desc:'Numbered cottages 104-743 across the West Manor Way, East Manor Way, and South/West Bonita Ave clusters', sqft:0, floors:1, year:1980, unitCount:104},
+      {id:'cm-villas', name:'Villas (630-646)', type:'il', desc:'Villa-style units near Health Care Center', sqft:0, floors:1, year:1990, unitCount:17},
+      {id:'cm-pool', name:'Pool & Putting Green', type:'outdoor', desc:'Outdoor recreation — pool deck near West Manor, putting green near Fitness Center'},
+      {id:'cm-rose-garden', name:'Rose Garden', type:'outdoor', desc:'Garden space adjacent to Manor Hall'},
+      {id:'cm-koi-pond', name:'Koi Pond', type:'outdoor', desc:'Water feature near Grove Dining Room'},
+    ]
+  },
+  // ═══════════════════════════════════════════════════════════
+  {
+    id:'walnut-village', name:'Walnut Village', address:'891 S Walnut St, Anaheim, CA 92802',
+    phone:'', dataQuality:'full', region:'Orange County',
+    buildings:[
+      {id:'wv-main', name:'Main Building', type:'community', desc:'Dining Room, Library, Fitness Center, Woodbury Hall', sqft:52000, floors:1, year:1975},
+      {id:'wv-rehab', name:'Rehabilitation and Care Center', type:'snf', desc:'Skilled nursing & rehab facility with own parking', sqft:48000, floors:2, year:1975},
+      {id:'wv-summer-house', name:'Summer House (Memory Support)', type:'mc', desc:'Memory care neighborhood', sqft:18000, floors:1, year:2000},
+      {id:'wv-key-west', name:'Key West / Nantucket / Cape Cod / Santa Bell (SNF rooms)', type:'snf', desc:'Skilled nursing room clusters: Nantucket SH-2/4, Key West SH-5/7/8/9/10/14/16/18/20, Cape Cod SH-7/9/21, Santa Bell SH-23/24', sqft:22000, floors:1, year:1985},
+      {id:'wv-beauty-shop', name:'Beauty Shop', type:'community', desc:'Resident services building'},
+      {id:'wv-il-apts', name:'Independent Living Apartments (units 120-184)', type:'il', desc:'Floor-plan coded IL units — e.g. #147 E-1, #149 C-3-S, #168 B-1 — across buildings A through V', sqft:0, floors:2, year:1995, unitCount:48},
+      {id:'wv-cottages', name:'Cottages (865-955, 1-170)', type:'il', desc:'Numbered cottages across 11 carport clusters, plus higher-numbered cottages 865-955 near Building C', sqft:0, floors:1, year:1978, unitCount:178},
+      {id:'wv-dog-park', name:'Dog Park', type:'outdoor', desc:'Pet recreation area'},
+      {id:'wv-putting-green', name:'Putting Green', type:'outdoor', desc:'Golf practice green'},
+      {id:'wv-bocce', name:'Bocce Ball & Shuffleboard', type:'outdoor', desc:'Outdoor recreation courts'},
+      {id:'wv-pool', name:'Pool, Jacuzzi & Therapy Pool', type:'outdoor', desc:'Aquatic recreation and therapy'},
+      {id:'wv-fountain', name:'Fountain Plaza', type:'outdoor', desc:'Central fountain courtyard near Buildings B/I/J/K'},
+    ]
+  },
+  // ═══════════════════════════════════════════════════════════
+  {
+    id:'villa-gardens', name:'Villa Gardens', address:'842 E Villa St, Pasadena, CA 91101',
+    phone:'', dataQuality:'full', region:'Los Angeles Metro',
+    buildings:[
+      {id:'vg-residence', name:'Villa Gardens Residence', type:'il', desc:'Main independent living residence building with central courtyard, fountain, and pool', sqft:165000, floors:5, year:1972},
+      {id:'vg-medical', name:'Villa Gardens Medical Center', type:'snf', desc:'Skilled nursing / medical center with separate pool courtyard', sqft:54000, floors:3, year:1972},
+      {id:'vg-courtyard-pool', name:'Courtyard Pool & Fountain', type:'outdoor', desc:'Central courtyard water features'},
+    ]
+  },
+  // ═══════════════════════════════════════════════════════════
+  {
+    id:'fredericka-manor', name:'Fredericka Manor', address:'183 Third Avenue, Chula Vista, CA 91910',
+    phone:'(619) 205-4115', dataQuality:'full', region:'San Diego County',
+    buildings:[
+      {id:'fm-asbury-towers', name:'Asbury Towers', type:'il', desc:'183 Third Avenue — main IL tower with East Elevator, Lobby, Front Desk', sqft:142000, floors:9, year:1968},
+      {id:'fm-saylor', name:'Saylor Building', type:'mixed', desc:'Fredericka Manor Care Center building, includes Care Center', sqft:38000, floors:3, year:1970},
+      {id:'fm-care-center', name:'Fredericka Manor Care Center', type:'snf', desc:'111 Third Avenue — skilled nursing facility', sqft:46000, floors:2, year:1970},
+      {id:'fm-care-center-2', name:'Fredericka Manor Care Center (2nd bldg)', type:'snf', desc:'Additional skilled nursing building near service entrance', sqft:22000, floors:1, year:1975},
+      {id:'fm-timken-lodge', name:'Timken Lodge', type:'il', desc:'172 Jasmine Way — independent living building with Clubhouse and Clinic', sqft:54000, floors:2, year:1990},
+      {id:'fm-summer-house', name:'Summer House (Memory Care Neighborhood)', type:'mc', desc:'Memory care neighborhood off Jasmine Way', sqft:24000, floors:1, year:2002},
+      {id:'fm-marketing-center', name:'Marketing Center', type:'admin', desc:'Sales and marketing office'},
+      {id:'fm-cottages-north', name:'North Cottages (E Street cluster, 242-296)', type:'il', desc:'Numbered cottage cluster near E Street / Timken Greens', sqft:0, floors:1, year:1965, unitCount:18},
+      {id:'fm-cottages-south', name:'South Cottages (Mountain View / Avenue clusters)', type:'il', desc:'Large numbered cottage cluster bounded by Second Ave, Third Ave, and South/North/East/West Mountain View streets', sqft:0, floors:1, year:1965, unitCount:96},
+      {id:'fm-garages', name:'Garages (multiple clusters)', type:'support', desc:'Resident garage structures distributed across the campus'},
+      {id:'fm-dog-park', name:'Dog Park & Bocce Ball', type:'outdoor', desc:'Pet recreation and bocce court near Timken Lodge'},
+      {id:'fm-pond', name:'Pond', type:'outdoor', desc:'Water feature near Asbury Towers / Health Care Center'},
+      {id:'fm-rose-garden', name:'Garden (Carob Walk / Rose area)', type:'outdoor', desc:'Garden walkways with shuffleboard'},
+    ]
+  },
+  // ═══════════════════════════════════════════════════════════
+  {
+    id:'sunny-view', name:'Sunny View', address:'22445 Cupertino Rd, Cupertino, CA 95014',
+    phone:'', dataQuality:'full', region:'Bay Area',
+    buildings:[
+      {id:'sv-building1', name:'Building 1 (Main Complex)', type:'mixed', desc:'Central complex housing Dining Hall, Game Room, Kitchen, Wings 1 & 3, SNF wing (113-124)', sqft:185000, floors:2, year:1965},
+      {id:'sv-dining-hall', name:'Dining Hall', type:'community', desc:'Main dining facility with gazebo adjacency'},
+      {id:'sv-wellness', name:'Wellness Center', type:'community', desc:'Therapy, fitness, and wellness programs'},
+      {id:'sv-library', name:'Library', type:'community', desc:'Resident library'},
+      {id:'sv-community-center', name:'Community Center', type:'community', desc:'Standalone community/event building'},
+      {id:'sv-memory-care', name:'Memory Care (Frangelle Building)', type:'mc', desc:'Memory care neighborhood'},
+      {id:'sv-il-buildings', name:'IL Buildings — Poppy/Plum/Pine/Ivy Lane', type:'il', desc:'Independent living units across Poppy Lane (37-59), Plum Lane (1-4, 87-91), Pine Lane (1st/2nd floor), Ivy Lane', sqft:0, floors:2, year:1972, unitCount:62},
+      {id:'sv-rose-lane', name:'Rose Lane Cottages', type:'il', desc:'Cottage units 32-36 area near Rose Garden', sqft:0, floors:1, year:1972, unitCount:8},
+      {id:'sv-upper-villas', name:'Upper & Lower Villas', type:'il', desc:'Villa units 1-9 (lower), 10-16 (upper) with dedicated garages', sqft:0, floors:1, year:1978, unitCount:16},
+      {id:'sv-rose-garden', name:'Rose Garden', type:'outdoor', desc:'Garden space adjacent to IL buildings'},
+      {id:'sv-gazebo', name:'Gazebo', type:'outdoor', desc:'Outdoor gathering structure near Dining Hall'},
+    ]
+  },
+  // ═══════════════════════════════════════════════════════════
+  {
+    id:'kingsley-manor', name:'Kingsley Manor', address:'1055 N Kingsley Dr, Los Angeles, CA 90029',
+    phone:'', dataQuality:'partial', region:'Los Angeles Metro',
+    buildings:[
+      {id:'km-white-house', name:'White House', type:'il', desc:'Independent living building, red tile roof', sqft:48000, floors:2, year:1925},
+      {id:'km-leitzell-hall', name:'Leitzell Hall', type:'il', desc:'Independent living building, largest structure on campus', sqft:72000, floors:3, year:1925},
+      {id:'km-margaret-hall', name:'Margaret Hall', type:'snf', desc:'Skilled nursing building, red tile roof, adjacent to Care Center', sqft:38000, floors:2, year:1930},
+      {id:'km-holly-cottage', name:'Holly Cottage', type:'il', desc:'Independent living cottage near Chapel', sqft:4200, floors:1, year:1925},
+      {id:'km-chapel', name:'Chapel', type:'community', desc:'On-campus chapel'},
+      {id:'km-admin-building', name:'Admin Building', type:'admin', desc:'Administrative offices, red tile roof building'},
+      {id:'km-admin-offices', name:'Admin Offices (annex)', type:'admin', desc:'Secondary administrative building'},
+      {id:'km-dining-hall', name:'Dining Hall', type:'community', desc:'Main dining facility'},
+      {id:'km-care-center', name:'Care Center', type:'snf', desc:'Skilled nursing care center'},
+      {id:'km-cottages', name:'Numbered Apartment Buildings (1000-1054)', type:'il', desc:'Apartment buildings 1000, 1002, 1028, 1030, 1032, 1050, 1054 along the west side of campus', sqft:0, floors:2, year:1960, unitCount:7},
+      {id:'km-lawn', name:'Central Lawn', type:'outdoor', desc:'Open lawn space between White House and Admin Offices'},
+    ]
+  },
+  // ═══════════════════════════════════════════════════════════
+  {
+    id:'canterbury-woods', name:'Canterbury Woods', address:'651 Sinex Ave, Pacific Grove, CA 93950',
+    phone:'', dataQuality:'full', region:'Monterey Peninsula',
+    buildings:[
+      {id:'cw-bldg-b', name:'Building B', type:'il', desc:'Two-story apartment building', sqft:24000, floors:2, year:1986},
+      {id:'cw-bldg-c', name:'Building C', type:'il', desc:'Two-story apartment building, Cottages attached', sqft:24000, floors:2, year:1986},
+      {id:'cw-bldg-d', name:'Building D', type:'il', desc:'Two-story apartment building, Cottages attached', sqft:24000, floors:2, year:1986},
+      {id:'cw-bldg-g', name:'Building G', type:'mixed', desc:'Two-story apartment building, attached to Activities Center', sqft:22000, floors:2, year:1986},
+      {id:'cw-bldg-h', name:'Building H', type:'il', desc:'Two-story apartment building, Cottages attached', sqft:24000, floors:2, year:1986},
+      {id:'cw-bldg-j', name:'Building J', type:'il', desc:'Two-story apartment building', sqft:24000, floors:2, year:1986},
+      {id:'cw-bldg-k', name:'Building K', type:'il', desc:'Two-story apartment building, Cottages attached', sqft:24000, floors:2, year:1986},
+      {id:'cw-bldg-l', name:'Building L', type:'il', desc:'Two-story apartment building, Cottages attached', sqft:24000, floors:2, year:1986},
+      {id:'cw-activities-center', name:'Activities Center', type:'community', desc:'Chapel, Canterbury Room, Auditorium, Art Studio, Fitness, Blue Room', sqft:18000, floors:1, year:1986},
+      {id:'cw-community-center', name:'Community Center', type:'community', desc:'Library, Lounge, Dining Room, Administration, Doctor\'s Office, Our Shop & Rose Room, Care Center & Personal Care', sqft:32000, floors:1, year:1986},
+      {id:'cw-jade-court', name:'Jade Court (Building A + Salon)', type:'mixed', desc:'IL building with on-site salon', sqft:18000, floors:2, year:1986},
+      {id:'cw-cottages', name:'Cottages (attached to B/C/D/G/H/K/L)', type:'il', desc:'Cottage units attached to main apartment buildings', sqft:0, floors:1, year:1986, unitCount:24},
+      {id:'cw-offsite-homes', name:'Offsite Homes (Lambeth, Windsor, Durham A/B, Cambridge)', type:'il', desc:'5 standalone offsite homes: Lambeth House, Windsor House, Durham A, Durham B, Cambridge Cottage', sqft:0, floors:1, year:1986, unitCount:5},
+      {id:'cw-japanese-garden', name:'Japanese Garden', type:'outdoor', desc:'Garden space between Buildings L and J'},
+      {id:'cw-jade-garden', name:'Jade Garden', type:'outdoor', desc:'Garden space between Buildings B and D'},
+    ]
+  },
+  // ═══════════════════════════════════════════════════════════
+  {
+    id:'spring-lake-village', name:'Spring Lake Village', address:'5555 Montgomery Dr., Santa Rosa, CA 95409',
+    phone:'(707) 538-8400', dataQuality:'full', region:'North Bay',
+    buildings:[
+      {id:'slv-village-center', name:'Village Center', type:'community', desc:'Bocce Court, Fire Pit, Sonoma Room, Great Hall, Library, Art Studio, Village Theater, Annadel Room, Village Bistro, Village Salon, Administration, Atrium, Wood Shop, Corner Store', sqft:62000, floors:1, year:1999},
+      {id:'slv-health-care', name:'Health Care Center (Skilled Nursing)', type:'snf', desc:'Skilled nursing facility', sqft:48000, floors:2, year:1999},
+      {id:'slv-laurel-place-al', name:'Laurel Place (Assisted Living)', type:'al', desc:'Assisted living building, includes Chaplain office', sqft:32000, floors:2, year:1999},
+      {id:'slv-maggies-place', name:"Maggie's Place (Memory Care)", type:'mc', desc:'Memory care, 1st floor of K-building cluster', sqft:16000, floors:1, year:2003},
+      {id:'slv-resident-health', name:'Resident Health Services', type:'snf', desc:'Outpatient health services building'},
+      {id:'slv-montgomery-center', name:'Montgomery Center', type:'community', desc:'Auditorium, Fitness Center & Pool'},
+      {id:'slv-chapel', name:'Chapel', type:'community', desc:'On-campus chapel near Laurel Place'},
+      {id:'slv-west-village-apts', name:'West Village Apartments (Iris, Juniper, Holly, Laurel Place IL, Ginko)', type:'il', desc:'IL apartment buildings I-Iris, J-Juniper, H-Holly, L-Laurel Place, G-Ginko', sqft:0, floors:2, year:1992, unitCount:64},
+      {id:'slv-west-village-cottages', name:'West Village Cottages', type:'il', desc:'Cottage units 50-58 near Montgomery Center', sqft:0, floors:1, year:1992, unitCount:9},
+      {id:'slv-east-village-apts', name:'East Village Apartments (Aspen, Bayberry, Cypress, Daphne, Elm, Fern)', type:'il', desc:'IL apartment buildings A-Aspen, B-Bayberry, C-Cypress, D-Daphne, E-Elm, F-Fern', sqft:0, floors:2, year:1995, unitCount:78},
+      {id:'slv-east-village-cottages', name:'East Village Cottages', type:'il', desc:'Cottage units 10-28 near East Village', sqft:0, floors:1, year:1995, unitCount:20},
+      {id:'slv-creekside', name:'Creekside East & West Apartments', type:'il', desc:'IL apartment buildings along Santa Rosa Creek, units 29-89', sqft:0, floors:1, year:1990, unitCount:30},
+      {id:'slv-west-grove-apts', name:'West Grove Apartments (Pine, Oak, Nandina, Madrone)', type:'il', desc:'IL buildings P-Pine, O-Oak, N-Nandina, M-Madrone', sqft:0, floors:2, year:1990, unitCount:52},
+      {id:'slv-west-grove-cottages', name:'West Grove Cottages', type:'il', desc:'Cottage units 90-101 near The Dell', sqft:0, floors:1, year:1990, unitCount:12},
+      {id:'slv-the-dell', name:'The Dell / Resident Gardens', type:'outdoor', desc:'Resident garden plots'},
+      {id:'slv-creek', name:'Santa Rosa Creek frontage', type:'outdoor', desc:'Natural creek amenity bordering the property'},
+    ]
+  },
+  // ═══════════════════════════════════════════════════════════
+  {
+    id:'vista-del-monte', name:'Vista del Monte', address:'3775 Modoc Rd, Santa Barbara, CA 93105',
+    phone:'', dataQuality:'full', region:'Central Coast',
+    buildings:[
+      {id:'vdm-sierra-madre', name:'Sierra Madre', type:'il', desc:'Independent living building, units 181-195, 281-295', sqft:52000, floors:2, year:1988},
+      {id:'vdm-san-rafael', name:'San Rafael', type:'il', desc:'Independent living building, units 161-172, 261-272', sqft:48000, floors:2, year:1988},
+      {id:'vdm-santa-yanez', name:'Santa Yanez', type:'il', desc:'Independent living building, units 141-151, 241-251', sqft:42000, floors:2, year:1988},
+      {id:'vdm-fernbrook', name:'Fernbrook Madre (Assisted Living)', type:'al', desc:'Assisted living building, units 32-54, 61-76', sqft:36000, floors:2, year:1995},
+      {id:'vdm-summer-house', name:'Summer House Memory Care', type:'mc', desc:'Memory care neighborhood, units 1-24', sqft:20000, floors:1, year:2001},
+      {id:'vdm-fitness-aquatic', name:'Fitness & Aquatic Center', type:'community', desc:'Pool and fitness facility'},
+      {id:'vdm-main-building', name:'Main Building (Dining, Admin, Lounge, Library, Patio)', type:'mixed', desc:'Dining Room, Admin Offices, Main Lounge, Library, Patio Room, Physical Therapy', sqft:58000, floors:1, year:1988},
+      {id:'vdm-los-padres-courts', name:'Los Padres Courts', type:'il', desc:'IL units 101-138, 201-239 around Jacaranda/Pine/Fountain/Pepper Tree Courts', sqft:0, floors:2, year:1990, unitCount:78},
+      {id:'vdm-the-park', name:'The Park', type:'outdoor', desc:'Central park/green space'},
+      {id:'vdm-courts', name:'Jacaranda / Pine / Fountain / Pepper Tree Courts', type:'outdoor', desc:'Landscaped courtyards within Los Padres Courts complex'},
+    ]
+  },
+  // ═══════════════════════════════════════════════════════════
+  {
+    id:'friends-house', name:'Friends House', address:'684 Benicia Dr, Santa Rosa, CA 95409',
+    phone:'', dataQuality:'full', region:'North Bay',
+    buildings:[
+      {id:'fh-lobby', name:'Lobby / Commons A/B/C', type:'community', desc:'Main entrance, Commons A, B, C gathering spaces', sqft:24000, floors:1, year:1990},
+      {id:'fh-assisted-living', name:'Assisted Living', type:'al', desc:'Assisted living wing with units S/Q/O/M/K/R/P/N/L/H/F/D/J/I', sqft:42000, floors:1, year:1990},
+      {id:'fh-il-cottages', name:'IL Cottages (1-71)', type:'il', desc:'71 numbered independent living cottages across the East/North/South Ring Road', sqft:0, floors:1, year:1985, unitCount:71},
+      {id:'fh-bambi-lane', name:'Bambi Lane Cottages (50-53)', type:'il', desc:'4 cottages on Bambi Lane', sqft:0, floors:1, year:1985, unitCount:4},
+      {id:'fh-58-60', name:'Buildings 58-60 (Rinconada)', type:'il', desc:'IL buildings near Rinconada and emergency exit'},
+      {id:'fh-cafe', name:'Café', type:'community', desc:'On-site café'},
+      {id:'fh-fitness', name:'Fitness Center', type:'community', desc:'Fitness facility'},
+      {id:'fh-library', name:'Library', type:'community', desc:'Resident library'},
+      {id:'fh-dog-park', name:'Dog Park', type:'outdoor', desc:'Pet recreation area'},
+      {id:'fh-butterfly-garden', name:'Butterfly Garden', type:'outdoor', desc:'Garden space'},
+      {id:'fh-community-garden', name:'Community Garden', type:'outdoor', desc:'Resident garden plots'},
+      {id:'fh-taylor-park', name:'Taylor Park', type:'outdoor', desc:'Park space with public walking trail'},
+      {id:'fh-walking-trail', name:'Public Walking Trail', type:'outdoor', desc:'Trail along North Ducker Creek'},
+    ]
+  },
+  // ═══════════════════════════════════════════════════════════
+  {
+    id:'wesley-palms', name:'Wesley Palms', address:'2404 Loring St., San Diego, CA 92109',
+    phone:'', dataQuality:'full', region:'San Diego County',
+    buildings:[
+      {id:'wp-main-building', name:'Main Building (Dining, Library, Fitness, Woodbury Hall)', type:'community', desc:'Dining Room, Library, Fitness Center, Woodbury Hall', sqft:48000, floors:1, year:1965},
+      {id:'wp-summer-house', name:'Summer House Memory Support', type:'mc', desc:'Memory care neighborhood', sqft:18000, floors:1, year:2000},
+      {id:'wp-beauty-shop', name:'Beauty Shop', type:'community', desc:'Resident services'},
+      {id:'wp-cottages', name:'Cottages (1-170)', type:'il', desc:'170 numbered cottages across 11 carport clusters bounded by Pendleton St and Wesley Dr', sqft:0, floors:1, year:1972, unitCount:170},
+      {id:'wp-dog-park', name:'Dog Park', type:'outdoor', desc:'Pet recreation area'},
+      {id:'wp-putting-green', name:'Putting Green', type:'outdoor', desc:'Golf practice green'},
+      {id:'wp-bocce', name:'Bocce Ball & Shuffleboard', type:'outdoor', desc:'Outdoor recreation courts'},
+      {id:'wp-pool', name:'Pool, Jacuzzi & Therapy Pool', type:'outdoor', desc:'Aquatic recreation and therapy'},
+      {id:'wp-dining-terrace', name:'Dining Terrace', type:'outdoor', desc:'Outdoor dining space'},
+    ]
+  },
+  // ═══════════════════════════════════════════════════════════
+  {
+    id:'carlsbad-by-the-sea', name:'Carlsbad by the Sea', address:'2855 Carlsbad Blvd, Carlsbad, CA 92008',
+    phone:'', dataQuality:'partial', region:'San Diego County',
+    buildings:[
+      {id:'cbts-bldg-a', name:'Building A (Under Construction)', type:'il', desc:'New 4-story Independent Living building — currently under construction on the Ocean St/Garfield St lot. PLANNED — not yet an assessable existing asset.', sqft:62000, floors:4, year:2027, status:'planned'},
+      {id:'cbts-bldg-b', name:'Building B (North Building)', type:'mixed', desc:'North building within the Christiansen Way/Grand Ave parcel', sqft:58000, floors:4, year:1985},
+      {id:'cbts-bldg-c', name:'Building C (South Building)', type:'mixed', desc:'South building with pool courtyard, south of Grand Ave', sqft:72000, floors:5, year:1985},
+      {id:'cbts-bldg-d', name:'Building D (Oceanfront Building)', type:'il', desc:'Oceanfront building, separate parcel near Ocean Villas', sqft:44000, floors:4, year:1980},
+      {id:'cbts-pool', name:'Pool (Building C courtyard)', type:'outdoor', desc:'Pool deck within Building C complex'},
+    ]
+  },
+  // ═══════════════════════════════════════════════════════════
+  {
+    id:'san-francisco-towers', name:'San Francisco Towers', address:'1661 Pine St, San Francisco, CA 94109',
+    phone:'', dataQuality:'partial', region:'San Francisco', isHighRise:true,
+    buildings:[
+      {id:'sft-tower', name:'San Francisco Towers (Main Tower)', type:'il', desc:'Single high-rise tower, urban infill site on Austin St. Includes glass atrium/conservatory structure at base and central courtyard. No campus layout — internal floors and wings to be defined as data is gathered.', sqft:285000, floors:12, year:2005},
+      {id:'sft-atrium', name:'Atrium / Conservatory', type:'community', desc:'Glass atrium structure at base of tower, visible from aerial — likely dining or common space'},
+      {id:'sft-courtyard', name:'Courtyard', type:'outdoor', desc:'Landscaped courtyard between tower wings'},
+    ]
+  },
+  // ═══════════════════════════════════════════════════════════
+  {
+    id:'st-pauls-towers', name:"St. Paul's Towers", address:'100 Bay Place, Oakland, CA 94610',
+    phone:'', dataQuality:'partial', region:'East Bay', isHighRise:true,
+    buildings:[
+      {id:'spt-tower', name:"St. Paul's Towers (Main Tower)", type:'il', desc:'Single high-rise tower on Vernon St/Bay Pl/Montecito Ave. No campus layout — internal floors and wings to be defined as data is gathered.', sqft:310000, floors:23, year:1969},
+    ]
+  },
+  // ═══════════════════════════════════════════════════════════
+  {
+    id:'webster-house', name:'Webster House', address:'401 Webster St, Palo Alto, CA 94301',
+    phone:'', dataQuality:'minimal', region:'Bay Area',
+    buildings:[
+      {id:'wh-lytton-gardens', name:'Lytton Gardens (Main Building)', type:'il', desc:'Main IL building, courtyard with circular fountain feature. Building data needs refinement.', sqft:0, floors:0, year:0, status:'needs-confirmation'},
+      {id:'wh-lytton-gardens-2', name:'Lytton Gardens II', type:'il', desc:'Secondary IL building near pool (address 651). Building data needs refinement.', sqft:0, floors:0, year:0, status:'needs-confirmation'},
+      {id:'wh-health-center', name:'Webster House Health Center', type:'snf', desc:'Skilled nursing / health center building. Building data needs refinement.', sqft:0, floors:0, year:0, status:'needs-confirmation'},
+      {id:'wh-656', name:'Building 656', type:'mixed', desc:'Addressed structure, function unconfirmed.', sqft:0, floors:0, year:0, status:'needs-confirmation'},
+      {id:'wh-630', name:'Building 630', type:'mixed', desc:'Addressed structure, function unconfirmed.', sqft:0, floors:0, year:0, status:'needs-confirmation'},
+      {id:'wh-pool', name:'Pool', type:'outdoor', desc:'Pool near Lytton Gardens II / building 651'},
+    ]
+  },
+];
+
+// Communities with NO site map at all — built as empty shells, ready for data entry
+const PLACEHOLDER_COMMUNITIES = [];
+
+</script>
+<script>
+// ══════════════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════════════
+let currentCommunityId = null;
+let selectedBuildingIds = [];
+let compareMode = false;
+let currentScope = null;
+let currentRoomSelection = null;
+let currentFlow = {};
+let photos = {ab:[]};
+let docs = {};
+let activeTypeFilter = null;
+
+const QUALITY_META = {
+  full:    {label:'Full site data', color:'var(--green)', bg:'var(--green-pl)'},
+  partial: {label:'Partial data',   color:'var(--amber)', bg:'var(--amber-pl)'},
+  minimal: {label:'Minimal data',   color:'var(--red)',   bg:'var(--red-pl)'},
+};
+
+// ══════════════════════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════════════════════
+const PAGE_TITLES = {
+  'communities':'Communities','community-detail':'Community detail','add-building':'Add building',
+  'building-detail':'Building detail','path-picker':'New assessment','select-community':'Select community',
+  'select-inventory':'Select inventory','scope':'Define scope','program':'Define program',
+  'comparison':'Comparison report','compare-or-report':'Report','reports':'Assessment history',
+  'portfolio-intel':'Portfolio intelligence'
+};
+
+function crumbsFor(page) {
+  switch(page) {
+    case 'communities': return [['Communities',null]];
+    case 'community-detail': {
+      const c = COMMUNITIES.find(x=>x.id===currentCommunityId);
+      return [['Communities','communities'],[c?c.name:'Community',null]];
+    }
+    case 'add-building': return currentFlow.fromPathPicker
+      ? [['New assessment','path-picker'],['Add building',null]]
+      : [['Communities','communities'],['Add building',null]];
+    case 'building-detail': {
+      const c = COMMUNITIES.find(x=>x.id===currentCommunityId);
+      return [['Communities','communities'],[c?c.name:'Community','community-detail'],['Building detail',null]];
+    }
+    case 'path-picker': return [['New assessment',null]];
+    case 'select-community': return [['New assessment','path-picker'],['Select community',null]];
+    case 'select-inventory': return [['New assessment','path-picker'],['Select community','select-community'],['Select inventory',null]];
+    case 'scope': return [['New assessment','path-picker'],['Define scope',null]];
+    case 'program': return [['New assessment','path-picker'],['Define scope','scope'],['Define program',null]];
+    case 'comparison': return [['New assessment','path-picker'],['Comparison report',null]];
+    case 'compare-or-report': return [['New assessment','path-picker'],['Report',null]];
+    case 'reports': return [['Assessment history',null]];
+    case 'portfolio-intel': return [['Portfolio intelligence',null]];
+    default: return [[PAGE_TITLES[page]||page,null]];
+  }
+}
+
+function nav(page, pushState) {
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+  const target = document.getElementById('page-' + page);
+  if (target) target.classList.remove('hidden');
+  else { console.warn('Page not found:', page); return; }
+
+  const crumbs = crumbsFor(page);
+  document.getElementById('breadcrumb').innerHTML = crumbs.map(([label, crumbTarget], i) => {
+    const isLast = i === crumbs.length - 1;
+    return (i>0 ? '<span class="sep">/</span>' : '') +
+      `<span class="crumb ${isLast?'current':''}" ${crumbTarget?`onclick="nav('${crumbTarget}')"`:''}>${label}</span>`;
+  }).join('');
+
+  document.querySelectorAll('.sb-nav-item').forEach(el => el.classList.remove('active'));
+  if (page === 'communities' || page === 'community-detail' || page === 'building-detail') document.getElementById('nav-communities')?.classList.add('active');
+  if (['path-picker','add-building','select-community','select-inventory','scope','program','comparison','compare-or-report'].includes(page) && !currentCommunityId)
+    document.getElementById('nav-new')?.classList.add('active');
+  if (page === 'reports') document.getElementById('nav-reports')?.classList.add('active');
+  if (page === 'portfolio-intel') document.getElementById('nav-portfolio-intel')?.classList.add('active');
+
+  const actions = document.getElementById('topbar-actions');
+  if (page === 'communities') actions.innerHTML = `<button class="btn btn-client btn-sm" onclick="nav('path-picker')"><i class="ti ti-plus"></i>New assessment</button>`;
+  else actions.innerHTML = '';
+
+  if (pushState !== false) history.pushState({page}, '', '#/' + page);
+
+  if (page === 'communities') renderCommunityGrid('community-grid', false);
+  if (page === 'select-community') renderCommunityGrid('select-community-grid', true);
+  if (page === 'select-inventory') {
+    const cmToggle = document.getElementById('compare-mode-toggle');
+    if (cmToggle) cmToggle.checked = compareMode;
+    activeTypeFilter = null;
+    renderTypeFilters('si-type-filters', 'select-bldg-grid', true);
+    renderBuildingGrid('select-bldg-grid', true);
+    updateSelectCount();
+    setTimeout(() => renderBuildingGrid('select-bldg-grid', true), 0);
+  }
+  if (page === 'reports') renderReportsTable();
+  if (page === 'portfolio-intel') renderPortfolioIntel();
+  if (page === 'scope') renderScopeStepper(1);
+  if (page === 'program') renderScopeStepper(2);
+  if (page === 'add-building') populateAddBuildingForm();
+
+  window.scrollTo(0,0);
+  document.getElementById('content').scrollTop = 0;
+}
+
+window.addEventListener('popstate', () => nav((location.hash.replace('#/','')) || 'communities', false));
+
+// ══════════════════════════════════════════════════════════════
+//  COMMUNITY GRID
+// ══════════════════════════════════════════════════════════════
+function totalBuildings() { return COMMUNITIES.reduce((s,c) => s + c.buildings.length, 0); }
+
+function renderCommunityGrid(targetId, selectable) {
+  const grid = document.getElementById(targetId);
+  if (!grid) return;
+  grid.innerHTML = COMMUNITIES.map(c => {
+    const q = QUALITY_META[c.dataQuality];
+    const ilCount = c.buildings.filter(b=>b.type==='il').length;
+    const careCount = c.buildings.filter(b=>['al','mc','snf'].includes(b.type)).length;
+    return `<div class="comm-card" onclick="${selectable ? `chooseCommunity('${c.id}')` : `openCommunityDetail('${c.id}')`}">
+      <div class="comm-thumb">
+        <i class="ti ti-map-pin comm-thumb-icon"></i>
+        <span class="comm-thumb-quality" style="background:${q.bg};color:${q.color}">${q.label}</span>
+      </div>
+      <div class="comm-body">
+        <div class="comm-name">${c.name}${c.isHighRise?' <span style="font-size:9px;font-weight:600;color:var(--blue-lt)">· High-rise</span>':''}</div>
+        <div class="comm-meta">${c.address}</div>
+        <div class="comm-stats">
+          <div class="comm-stat"><div class="comm-stat-val">${c.buildings.length}</div><div class="comm-stat-lbl">Buildings</div></div>
+          <div class="comm-stat"><div class="comm-stat-val">${ilCount}</div><div class="comm-stat-lbl">IL</div></div>
+          <div class="comm-stat"><div class="comm-stat-val">${careCount}</div><div class="comm-stat-lbl">AL/MC/SNF</div></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Update top-level stats if on communities page
+  const totalEl = document.getElementById('stat-total-buildings');
+  if (totalEl) {
+    totalEl.textContent = totalBuildings();
+    document.getElementById('stat-full-data').textContent = COMMUNITIES.filter(c=>c.dataQuality==='full').length;
+    document.getElementById('stat-needs-data').textContent = COMMUNITIES.filter(c=>c.dataQuality!=='full').length;
+  }
+}
+
+function chooseCommunity(id) {
+  currentCommunityId = id;
+  selectedBuildingIds = [];
+  nav('select-inventory');
+}
+
+function openCommunityDetail(id) {
+  const c = COMMUNITIES.find(x => x.id === id);
+  if (!c) return;
+  currentCommunityId = id;
+  document.getElementById('cd-name').textContent = c.name;
+  document.getElementById('cd-meta').textContent = `${c.address}${c.phone ? ' · '+c.phone : ''} · ${c.buildings.length} buildings on file`;
+  activeTypeFilter = null;
+  renderTypeFilters('cd-type-filters', 'cd-building-grid', false);
+  renderBuildingGrid('cd-building-grid', false);
+  nav('community-detail');
+}
+
+function startAssessmentForCommunity() {
+  selectedBuildingIds = [];
+  nav('select-inventory');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  BUILDING TYPE FILTERS
+// ══════════════════════════════════════════════════════════════
+function renderTypeFilters(filterTargetId, gridTargetId, selectable) {
+  const c = COMMUNITIES.find(x => x.id === currentCommunityId);
+  if (!c) return;
+  const presentTypes = [...new Set(c.buildings.map(b => b.type))];
+  const el = document.getElementById(filterTargetId);
+  if (!el) return;
+  el.innerHTML = '<div class="type-pill ' + (activeTypeFilter===null?'active':'') + '" style="' + (activeTypeFilter===null?'background:var(--navy);border-color:var(--navy)':'') + '" onclick="setTypeFilter(null,\''+gridTargetId+'\',\''+filterTargetId+'\','+selectable+')">All (' + c.buildings.length + ')</div>' +
+    presentTypes.map(t => {
+      const meta = TYPE_META[t];
+      const count = c.buildings.filter(b=>b.type===t).length;
+      const isActive = activeTypeFilter === t;
+      return `<div class="type-pill ${isActive?'active':''}" style="${isActive?`background:${meta.color};border-color:${meta.color}`:''}" onclick="setTypeFilter('${t}','${gridTargetId}','${filterTargetId}',${selectable})"><i class="ti ${meta.icon}"></i>${meta.label} (${count})</div>`;
+    }).join('');
+}
+
+function setTypeFilter(type, gridTargetId, filterTargetId, selectable) {
+  activeTypeFilter = type;
+  renderTypeFilters(filterTargetId, gridTargetId, selectable);
+  renderBuildingGrid(gridTargetId, selectable);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  BUILDING GRID (within a community)
+// ══════════════════════════════════════════════════════════════
+function renderBuildingGrid(targetId, selectable) {
+  const grid = document.getElementById(targetId);
+  if (!grid) return;
+  const c = COMMUNITIES.find(x => x.id === currentCommunityId);
+  if (!c) { grid.innerHTML = '<div style="color:var(--gray-lt);font-size:12px">No community selected.</div>'; return; }
+
+  let buildings = c.buildings;
+  if (activeTypeFilter) buildings = buildings.filter(b => b.type === activeTypeFilter);
+
+  if (selectable) {
+    document.getElementById('si-community-name').textContent = `${c.name} — choose one property to assess, or select multiple to compare`;
+  }
+
+  grid.innerHTML = buildings.map(b => {
+    const meta = TYPE_META[b.type];
+    const isSelected = selectedBuildingIds.includes(b.id);
+    const clickHandler = selectable ? ('toggleBuildingSelect(\'' + b.id + '\')') : ('openBuildingDetail(\'' + b.id + '\')');
+    const statusTag = b.status === 'planned'
+      ? `<div class="bldg-status-tag" style="background:var(--amber-pl);color:var(--amber-dk)">PLANNED</div>`
+      : b.status === 'needs-confirmation'
+      ? `<div class="bldg-status-tag" style="background:var(--red-pl);color:var(--red-dk)">NEEDS DATA</div>`
+      : '';
+    const checkHtml = selectable ? `<div class="bldg-check">${isSelected?'<i class="ti ti-check"></i>':''}</div>` : statusTag;
+    return `<div class="bldg-card ${selectable?'selectable':''} ${isSelected?'selected':''}" onclick="${clickHandler}">
+      ${checkHtml}
+      <span class="bldg-type-chip" style="background:${meta.bg};color:${meta.color}"><i class="ti ${meta.icon}"></i>${meta.label}</span>
+      <div class="bldg-name">${b.name}</div>
+      <div class="bldg-desc">${b.desc || ''}</div>
+      <div class="bldg-meta-row">
+        ${b.sqft ? `<span>${b.sqft.toLocaleString()} sf</span>` : ''}
+        ${b.floors ? `<span>${b.floors} floor${b.floors>1?'s':''}</span>` : ''}
+        ${b.unitCount ? `<span>${b.unitCount} units</span>` : ''}
+        ${b.year ? `<span>Built ${b.year}</span>` : ''}
+      </div>
+    </div>`;
+  }).join('') || '<div style="color:var(--gray-lt);font-size:12px;grid-column:1/-1;text-align:center;padding:30px">No buildings match this filter.</div>';
+}
+
+function openBuildingDetail(id) {
+  const c = COMMUNITIES.find(x => x.id === currentCommunityId);
+  const b = c?.buildings.find(x => x.id === id);
+  if (!b) return;
+  const meta = TYPE_META[b.type];
+
+  document.getElementById('bd-name').textContent = b.name;
+  document.getElementById('bd-meta').textContent = `${c.name} · ${meta.label}${b.sqft ? ' · '+b.sqft.toLocaleString()+' sf' : ''}`;
+
+  const profileRows = [
+    ['Building type', meta.label], ['Community', c.name],
+    ['Year built', b.year || 'Unknown'], ['Floors', b.floors || 'Unknown'],
+    ['Gross area', b.sqft ? b.sqft.toLocaleString()+' sf' : 'Not recorded'],
+    ['Units', b.unitCount || 'N/A'],
+  ];
+  document.getElementById('bd-profile-grid').innerHTML = profileRows.map(([k,v]) =>
+    `<div style="background:var(--sand);border-radius:6px;padding:8px 10px"><div style="font-size:10px;color:var(--gray-lt)">${k}</div><div style="font-size:12px;font-weight:600;color:var(--navy);margin-top:2px">${v}</div></div>`
+  ).join('') + `<div style="grid-column:1/-1;background:var(--blue-pale);border-radius:6px;padding:10px 12px;font-size:12px;color:var(--charcoal);line-height:1.6">${b.desc || 'No description on file.'}</div>`;
+
+  document.getElementById('bd-photos').innerHTML = `<div style="font-size:12px;color:var(--gray-lt);padding:20px;text-align:center;background:var(--sand);border-radius:8px"><i class="ti ti-photo" style="font-size:24px;display:block;margin-bottom:6px"></i>No photos uploaded yet for this building.</div>`;
+  document.getElementById('bd-history').innerHTML = `<div style="font-size:12px;color:var(--gray-lt)">No assessments run yet for this building.</div>`;
+
+  currentFlow.buildingId = id;
+  nav('building-detail');
+}
+
+function startAssessmentFor() {
+  selectedBuildingIds = currentFlow.buildingId ? [currentFlow.buildingId] : [];
+  compareMode = false;
+  nav('scope');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  ADD BUILDING
+// ══════════════════════════════════════════════════════════════
+function populateAddBuildingForm() {
+  const commSel = document.getElementById('ab-community');
+  commSel.innerHTML = '<option value="">Select community…</option>' + COMMUNITIES.map(c => `<option value="${c.id}" ${c.id===currentCommunityId?'selected':''}>${c.name}</option>`).join('');
+  const typeSel = document.getElementById('ab-type');
+  typeSel.innerHTML = '<option value="">Select building type…</option>' + Object.entries(TYPE_META).map(([k,v]) => `<option value="${k}">${v.label}</option>`).join('');
+  const ctxEl = document.getElementById('ab-community-context');
+  if (currentCommunityId) {
+    const c = COMMUNITIES.find(x=>x.id===currentCommunityId);
+    ctxEl.textContent = `Adding a building to ${c ? c.name : 'a Front Porch community'}`;
+  } else {
+    ctxEl.textContent = 'Add a new building to any Front Porch community';
+  }
+}
+
+function cancelAddBuilding() {
+  currentFlow.fromPathPicker = false;
+  if (currentCommunityId) openCommunityDetail(currentCommunityId);
+  else nav('communities');
+}
+
+function saveBuildingToInventory() {
+  const name = document.getElementById('ab-name').value.trim();
+  const commId = document.getElementById('ab-community').value;
+  const type = document.getElementById('ab-type').value;
+  if (!name) { alert('Please enter a building name.'); return; }
+  if (!commId) { alert('Please select a community.'); return; }
+  if (!type) { alert('Please select a building type.'); return; }
+
+  const community = COMMUNITIES.find(c => c.id === commId);
+  const newB = {
+    id: 'custom-' + Date.now(), name, type,
+    desc: document.getElementById('ab-notes').value || '',
+    sqft: parseInt((document.getElementById('ab-sqft').value||'0').replace(/\D/g,'')) || 0,
+    floors: parseInt(document.getElementById('ab-floors').value) || 0,
+    unitCount: parseInt(document.getElementById('ab-units').value) || 0,
+    year: parseInt(document.getElementById('ab-year').value) || 0,
+  };
+  community.buildings.unshift(newB);
+  alert(`"${name}" has been added to ${community.name}.`);
+
+  if (currentFlow.fromPathPicker) {
+    currentCommunityId = commId;
+    selectedBuildingIds = [newB.id];
+    currentFlow.fromPathPicker = false;
+    nav('scope');
+  } else {
+    currentCommunityId = commId;
+    openCommunityDetail(commId);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  SELECT FROM INVENTORY
+// ══════════════════════════════════════════════════════════════
+function toggleCompareMode() {
+  compareMode = document.getElementById('compare-mode-toggle').checked;
+  if (!compareMode && selectedBuildingIds.length > 1) {
+    selectedBuildingIds = [selectedBuildingIds[0]];
+    renderBuildingGrid('select-bldg-grid', true);
+  }
+  updateSelectCount();
+}
+
+function toggleBuildingSelect(id) {
+  if (compareMode) {
+    const idx = selectedBuildingIds.indexOf(id);
+    if (idx >= 0) selectedBuildingIds.splice(idx,1);
+    else selectedBuildingIds.push(id);
+  } else {
+    selectedBuildingIds = [id];
+  }
+  renderBuildingGrid('select-bldg-grid', true);
+  updateSelectCount();
+}
+
+function updateSelectCount() {
+  document.getElementById('select-count').textContent = selectedBuildingIds.length;
+  const btn = document.getElementById('select-continue-btn');
+  const minRequired = compareMode ? 2 : 1;
+  btn.disabled = selectedBuildingIds.length < minRequired;
+  btn.innerHTML = compareMode && selectedBuildingIds.length >= 2
+    ? `Compare ${selectedBuildingIds.length} buildings <i class="ti ti-arrow-right"></i>`
+    : `Continue <i class="ti ti-arrow-right"></i>`;
+}
+
+function continueFromSelection() {
+  if (compareMode && selectedBuildingIds.length >= 2) {
+    nav('comparison'); renderComparison();
+  } else {
+    nav('scope');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  SCOPE SELECTOR
+// ══════════════════════════════════════════════════════════════
+function getBuildingById(id) {
+  for (const c of COMMUNITIES) {
+    const b = c.buildings.find(x => x.id === id);
+    if (b) return {building:b, community:c};
+  }
+  return null;
+}
+
+function renderScopeStepper(activeStep) {
+  const steps = ['Building','Scope','Program','Report'];
+  ['scope-stepper','program-stepper'].forEach(elId => {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    el.innerHTML = steps.map((s,i) => {
+      const num = i+1;
+      const isDone = num < activeStep+1;
+      const isActive = num === activeStep+1;
+      const lineHtml = i < steps.length-1 ? `<div class="step-line ${isDone?'done':''}"></div>` : '';
+      return `<div class="step-node"><div class="step-circle ${isDone?'done':isActive?'active':''}">${isDone?'<i class="ti ti-check"></i>':num}</div><div class="step-label ${isActive?'active':''}">${s}</div></div>${lineHtml}`;
+    }).join('');
+  });
+  const names = selectedBuildingIds.map(id => getBuildingById(id)?.building.name).filter(Boolean);
+  const bnEl = document.getElementById('scope-building-name');
+  if (bnEl) bnEl.textContent = names.length ? (names.length===1 ? `For: ${names[0]}` : `For: ${names.length} buildings (comparison)`) : '';
+}
+
+function selectScope(scope, el) {
+  currentScope = scope;
+  document.querySelectorAll('.select-card[data-scope]').forEach(c => {
+    c.classList.remove('selected'); c.querySelector('.check i').classList.add('hidden');
+  });
+  el.classList.add('selected'); el.querySelector('.check i').classList.remove('hidden');
+
+  const picker = document.getElementById('scope-room-picker');
+  const continueBtn = document.getElementById('scope-continue-btn');
+  if (scope === 'building') { picker.classList.add('hidden'); continueBtn.disabled = false; }
+  else { picker.classList.remove('hidden'); continueBtn.disabled = true; setRoomMode('pick'); renderRoomResults(''); }
+}
+
+function setRoomMode(mode) {
+  document.getElementById('room-mode-pick').style.cssText = mode==='pick' ? 'background:var(--blue);color:#fff' : 'background:transparent;color:var(--gray);border:1px solid var(--sand-dk)';
+  document.getElementById('room-mode-free').style.cssText = mode==='free' ? 'background:var(--blue);color:#fff' : 'background:transparent;color:var(--gray);border:1px solid var(--sand-dk)';
+  document.getElementById('room-pick-mode').classList.toggle('hidden', mode !== 'pick');
+  document.getElementById('room-free-mode').classList.toggle('hidden', mode !== 'free');
+}
+
+function renderRoomResults(query) {
+  const info = getBuildingById(selectedBuildingIds[0]);
+  const results = document.getElementById('room-results');
+  if (!info || !info.building.unitCount) {
+    results.innerHTML = `<div style="padding:20px;text-align:center;font-size:12px;color:var(--gray-lt)"><i class="ti ti-folder-x" style="font-size:22px;display:block;margin-bottom:6px"></i>No unit directory on file for this building.<br>Try "Describe freely" instead.</div>`;
+    return;
+  }
+  // Simulate a unit list based on unitCount since real per-unit directories aren't loaded yet
+  const q = (query||'').toLowerCase();
+  const simulatedUnits = Array.from({length: Math.min(info.building.unitCount, 30)}, (_,i) => ({
+    num: String(100 + i), floor: Math.floor(i/10)+1, sqft: 550 + (i%5)*120
+  })).filter(u => u.num.includes(q) || String(u.floor).includes(q));
+  results.innerHTML = simulatedUnits.map(u => `
+    <div class="room-row ${currentRoomSelection===u.num?'selected':''}" onclick="pickRoom('${u.num}')">
+      <div><div class="room-name">Unit ${u.num}</div><div class="room-meta">Floor ${u.floor}</div></div>
+      <div class="room-meta">${u.sqft.toLocaleString()} sf</div>
+    </div>`).join('') || `<div style="padding:16px;text-align:center;font-size:12px;color:var(--gray-lt)">No matches found.</div>`;
+}
+function filterRooms(q) { renderRoomResults(q); }
+function pickRoom(num) { currentRoomSelection = num; renderRoomResults(document.querySelector('.room-search input')?.value||''); document.getElementById('scope-continue-btn').disabled = false; }
+
+function maybeShowOptimumFinder() {
+  const sqft = document.getElementById('free-sqft').value;
+  const desc = document.getElementById('free-desc').value;
+  const resultEl = document.getElementById('optimum-finder-result');
+  const continueBtn = document.getElementById('scope-continue-btn');
+
+  if (sqft.trim().length > 2 && desc.trim().length > 15) {
+    continueBtn.disabled = false;
+    const info = getBuildingById(selectedBuildingIds[0]);
+    const sqftNum = parseInt(sqft.replace(/\D/g,'')) || 1000;
+    const isMC = /memory|dementia|secure/i.test(desc);
+    const isOutdoor = /garden|pool|outdoor|patio|courtyard/i.test(desc);
+
+    resultEl.innerHTML = `
+      <div class="optimum-card">
+        <div class="optimum-badge"><i class="ti ti-sparkles"></i> VizionBuild recommendation</div>
+        <div class="optimum-title">${isOutdoor ? 'Adjacent courtyard expansion' : 'Ground floor, west wing'}</div>
+        <div class="optimum-meta">${sqftNum.toLocaleString()} sf available · ${info ? info.building.name : 'Within selected building'}</div>
+        <div class="optimum-reasons">
+          <div class="optimum-reason"><i class="ti ti-circle-check"></i>${isMC ? 'Ground floor location with direct secured courtyard access supports memory care egress and wander-management requirements without major structural rework.' : 'Closest match to your target square footage within the existing building footprint, minimizing demolition.'}</div>
+          <div class="optimum-reason"><i class="ti ti-circle-check"></i>Existing corridor and emergency egress paths accommodate the proposed use without code-triggered reconfiguration.</div>
+          <div class="optimum-reason"><i class="ti ti-circle-check"></i>Proximity to existing dining/activity spaces supports resident programming continuity during and after conversion.</div>
+          <div class="optimum-reason"><i class="ti ti-circle-check"></i>Minimal disruption to occupied units — location allows phased construction without resident relocation.</div>
+        </div>
+      </div>
+      <div class="form-hint" style="margin-top:10px"><i class="ti ti-info-circle"></i> This recommendation is based on available building data. Confirm with an as-built walkthrough before finalizing scope.</div>
+    `;
+  } else {
+    continueBtn.disabled = true; resultEl.innerHTML = '';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PROGRAM BUILDER
+// ══════════════════════════════════════════════════════════════
+function backToProgramQuestion() {
+  document.getElementById('program-question').classList.remove('hidden');
+  document.getElementById('program-have').classList.add('hidden');
+  document.getElementById('program-build').classList.add('hidden');
+  document.getElementById('program-result').classList.add('hidden');
+}
+function selectProgramPath(path) {
+  document.getElementById('program-question').classList.add('hidden');
+  if (path === 'have') document.getElementById('program-have').classList.remove('hidden');
+  else { document.getElementById('program-build').classList.remove('hidden'); renderQuestionnaire(); }
+}
+const PROGRAM_QUESTIONS = [
+  "What is the primary purpose of this space? (e.g. memory care day room, assisted living suite, administrative office, common dining)",
+  "Approximately how many residents or staff will use this space regularly?",
+  "Do you need any specialized rooms — for example a nurse station, medication room, secured storage, or therapy room?",
+  "Are there any adjacency requirements — spaces that need to be near each other, near nursing staff, or near existing amenities?",
+];
+function renderQuestionnaire() {
+  document.getElementById('q-thread').innerHTML = PROGRAM_QUESTIONS.map((q,i) => `
+    <div class="q-bubble-ai">
+      <div class="q-avatar"><i class="ti ti-sparkles" style="color:#8FA3C0;font-size:13px"></i></div>
+      <div style="flex:1"><div class="q-bubble">${q}</div><textarea class="form-textarea" id="qa-${i}" style="min-height:50px" placeholder="Your answer…"></textarea></div>
+    </div>`).join('');
+}
+function generateProgram() {
+  const purpose = document.getElementById('qa-0')?.value || '';
+  const isMC = /memory|dementia|secure/i.test(purpose);
+  const isAL = /assist|al suite/i.test(purpose);
+  let rows;
+  if (isMC) {
+    rows = [['Day room / activity space',1,650,650],['Secured outdoor courtyard access',1,400,400],['Nurse station',1,180,180],['Medication room',1,90,90],['Resident bedrooms (private)',8,220,1760],['Dining alcove',1,300,300]];
+  } else if (isAL) {
+    rows = [['AL suite (private)',6,380,2280],['Common dining',1,500,500],['Activity room',1,350,350],['Nurse station',1,150,150]];
+  } else {
+    rows = [['Private office',3,150,450],['Open workstation area',1,800,800],['Conference room',1,300,300],['Break room',1,180,180]];
+  }
+  const total = rows.reduce((s,r)=>s+r[3],0);
+  document.getElementById('program-build').classList.add('hidden');
+  document.getElementById('program-result').classList.remove('hidden');
+  document.getElementById('program-rows').innerHTML = rows.map(([name,qty,each,tot]) => `
+    <div class="program-row"><div style="font-size:12.5px;color:var(--charcoal)">${name}</div><div style="font-size:12.5px;color:var(--gray)">${qty}</div><div style="font-size:12.5px;color:var(--gray)">${each.toLocaleString()} sf</div><div style="font-size:12.5px;font-weight:600;color:var(--navy)">${tot.toLocaleString()} sf</div><div><i class="ti ti-pencil" style="color:var(--gray-lt);font-size:13px;cursor:pointer"></i></div></div>`).join('');
+  document.getElementById('program-total-sf').textContent = total.toLocaleString() + ' sf';
+}
+
+// ══════════════════════════════════════════════════════════════
+//  COMPARISON
+// ══════════════════════════════════════════════════════════════
+function renderComparison() {
+  const infos = selectedBuildingIds.map(id => getBuildingById(id)).filter(Boolean);
+  document.getElementById('comparison-sub').textContent = `Comparing ${infos.length} properties to find the best fit for your proposed use`;
+
+  const scored = infos.map((info, i) => ({
+    info, score: [88,74,61,55][i] || (70-i*8),
+    cost: ['$380,000','$620,000','$890,000','$1,100,000'][i] || `$${700+i*150}K`,
+    timeline: ['6–10 months','12–18 months','16–24 months','22–30 months'][i] || `${10+i*4}–${16+i*4} months`,
+    keyFactor: [
+      'Existing layout and available capacity make this the fastest, lowest-cost path.',
+      'Suitable but requires moderate MEP and life-safety upgrades — viable second choice.',
+      'Significant code compliance gaps increase cost and timeline substantially.',
+      'Furthest from meeting use-specific requirements — would need near-complete renovation.'
+    ][i] || 'Requires further evaluation.'
+  })).sort((a,b) => b.score - a.score);
+
+  document.getElementById('comparison-content').innerHTML = `
+    <div class="compare-grid">
+      ${scored.map((s,i) => `<div class="compare-card ${i===0?'winner':''}">
+        ${i===0?'<div class="compare-winner-tag">BEST FIT</div>':''}
+        <div class="flex justify-between items-center">
+          <div><div style="font-size:15px;font-weight:700;color:var(--navy)">${s.info.building.name}</div><div style="font-size:12px;color:var(--gray-lt)">${s.info.community.name}${s.info.building.sqft?' · '+s.info.building.sqft.toLocaleString()+' sf':''}</div></div>
+          <div class="compare-score" style="color:${i===0?'var(--green)':i===1?'var(--amber)':'var(--red)'}">${s.score}</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid var(--sand-dk)">
+          <div><div style="font-size:10px;color:var(--gray-lt)">Est. cost to convert</div><div style="font-size:13px;font-weight:600;color:var(--navy)">${s.cost}</div></div>
+          <div><div style="font-size:10px;color:var(--gray-lt)">Est. timeline</div><div style="font-size:13px;font-weight:600;color:var(--navy)">${s.timeline}</div></div>
+        </div>
+        <div style="margin-top:10px;font-size:12px;color:var(--gray);line-height:1.6">${s.keyFactor}</div>
+      </div>`).join('')}
+    </div>
+    <div class="card" style="margin-top:14px;border-left:4px solid var(--client)">
+      <div class="card-title"><i class="ti ti-sparkles"></i>VizionBuild recommendation</div>
+      <div style="font-size:13px;color:var(--charcoal);line-height:1.7">Based on this comparison, <strong>${scored[0].info.building.name}</strong> at <strong>${scored[0].info.community.name}</strong> is the strongest candidate for this proposed use.</div>
+      <button class="btn btn-client" style="margin-top:12px" onclick="alert('This would launch a full single-building assessment.')">Run full assessment →</button>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  REPORTS / PORTFOLIO INTEL
+// ══════════════════════════════════════════════════════════════
+function renderReportsTable() {
+  const rows = [
+    ['Spring Lake Village','Maggie\'s Place capacity expansion','Conditional','amber','Jun 2026'],
+    ['Claremont Manor','Manor Hall ADA upgrade','Go','green','May 2026'],
+    ['Walnut Village','Rehab Center capital assessment','Go','green','Jun 2026'],
+    ['Fredericka Manor','Cottage cluster deferred maintenance','Conditional','amber','Apr 2026'],
+    ['Vista del Monte','Fernbrook AL expansion feasibility','No-Go','red','May 2026'],
+    ['Canterbury Woods','Activities Center renovation','Go','green','Jun 2026'],
+  ];
+  document.getElementById('reports-table').innerHTML = `
+    <div style="display:grid;grid-template-columns:2fr 2fr 100px 100px;gap:10px;padding:8px 0;border-bottom:2px solid var(--sand-dk);font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gray-lt)"><div>Community</div><div>Assessment</div><div>Verdict</div><div>Date</div></div>
+    ${rows.map(([c,a,v,vc,d]) => `<div style="display:grid;grid-template-columns:2fr 2fr 100px 100px;gap:10px;padding:10px 0;border-bottom:1px solid var(--sand-dk);align-items:center;font-size:12.5px"><div style="font-weight:500;color:var(--navy)">${c}</div><div style="color:var(--gray)">${a}</div><div><span class="badge badge-${vc}">${v}</span></div><div style="color:var(--gray-lt)">${d}</div></div>`).join('')}`;
+}
+
+function renderPortfolioIntel() {
+  document.getElementById('portfolio-intel-content').innerHTML = `
+    <div class="card" style="background:var(--navy);color:#fff">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px">Across ${COMMUNITIES.length} communities · ${totalBuildings()} buildings</div>
+      <div style="font-size:15px;font-weight:600;margin-bottom:16px">What the Front Porch portfolio is telling you</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+        <div style="text-align:center"><div style="font-size:30px;font-weight:700;color:#E05655">61%</div><div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:4px">of cottage clusters built before 1990 flag deferred maintenance as the top concern</div></div>
+        <div style="text-align:center"><div style="font-size:30px;font-weight:700;color:#F0A830">43%</div><div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:4px">of SNF/AL buildings flag life-safety system upgrades — fire alarm and sprinkler vintage</div></div>
+        <div style="text-align:center"><div style="font-size:30px;font-weight:700;color:#5DCAA5">5</div><div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:4px">communities have underused community/amenity buildings flagged as conversion candidates</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="ti ti-bulb"></i>Recommended capital planning actions</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="background:var(--red-pl);border-left:3px solid var(--red);border-radius:0 6px 6px 0;padding:10px 12px;font-size:12.5px;color:var(--charcoal)">Commission a portfolio-wide cottage cluster condition survey — Claremont Manor, Fredericka Manor, Walnut Village, and Wesley Palms all show 80+ pre-1990 cottages with no recent assessment.</div>
+        <div style="background:var(--amber-pl);border-left:3px solid var(--amber);border-radius:0 6px 6px 0;padding:10px 12px;font-size:12.5px;color:var(--charcoal)">Prioritize life-safety system audits at skilled nursing and assisted living buildings ahead of the next licensing survey cycle.</div>
+        <div style="background:var(--green-pl);border-left:3px solid var(--green);border-radius:0 6px 6px 0;padding:10px 12px;font-size:12.5px;color:var(--charcoal)">Spring Lake Village's Village Center model (consolidated amenities) is your strongest reference design — consider it as a template when evaluating amenity consolidation at other communities.</div>
+      </div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PHOTO / DOC UPLOAD
+// ══════════════════════════════════════════════════════════════
+function addPhotos(files, zone) {
+  [...files].forEach(f => { const r = new FileReader(); r.onload = e => { photos[zone]=photos[zone]||[]; photos[zone].push({name:f.name,src:e.target.result}); renderPhotos(zone); }; r.readAsDataURL(f); });
+}
+function dropFiles(e, zone) { e.preventDefault(); addPhotos(e.dataTransfer.files, zone); }
+function renderPhotos(zone) { const g=document.getElementById('pg-'+zone); if(g) g.innerHTML=(photos[zone]||[]).map(p=>`<div class="photo-thumb"><img src="${p.src}"></div>`).join(''); }
+function addDocs(files, targetId) { docs[targetId]=docs[targetId]||[]; [...files].forEach(f=>docs[targetId].push(f.name)); document.getElementById(targetId).innerHTML=docs[targetId].map(n=>`<div class="doc-item"><i class="ti ti-file"></i>${n}</div>`).join(''); }
+
+// ══════════════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════════════
+window.addEventListener('load', () => {
+  nav((location.hash.replace('#/','')) || 'communities', false);
+});
+</script>
+
+</body>
+</html>
